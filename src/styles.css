@@ -1,0 +1,155 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-brand: var(--brand);
+  --color-brand-light: var(--brand-light);
+  --color-brand-glow: var(--brand-glow);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+}
+
+:root {
+  --radius: 0.75rem;
+
+  /* HITCH SA — Nocturnal control tower */
+  --background: oklch(0.13 0.01 260);      /* zinc-950 */
+  --foreground: oklch(0.97 0.005 260);
+  --surface: oklch(0.18 0.01 260);         /* zinc-900 */
+  --surface-2: oklch(0.22 0.012 260);      /* zinc-800 */
+
+  --brand: oklch(0.62 0.14 158);           /* emerald 600 */
+  --brand-light: oklch(0.72 0.16 158);     /* emerald 500 */
+  --brand-glow: oklch(0.75 0.18 158 / 0.35);
+
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface);
+  --popover-foreground: var(--foreground);
+  --primary: var(--brand);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: var(--surface-2);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--surface-2);
+  --muted-foreground: oklch(0.68 0.01 260);
+  --accent: var(--surface-2);
+  --accent-foreground: var(--foreground);
+  --destructive: oklch(0.6 0.22 27);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(1 0 0 / 0.08);
+  --input: oklch(1 0 0 / 0.12);
+  --ring: var(--brand-light);
+}
+
+.dark {
+  --background: oklch(0.13 0.01 260);
+  --foreground: oklch(0.97 0.005 260);
+}
+
+.light {
+  /* HITCH SA — Daylight control tower */
+  --background: oklch(0.985 0.003 260);
+  --foreground: oklch(0.18 0.01 260);
+  --surface: oklch(1 0 0);
+  --surface-2: oklch(0.96 0.005 260);
+
+  --brand: oklch(0.55 0.14 158);
+  --brand-light: oklch(0.62 0.15 158);
+  --brand-glow: oklch(0.72 0.16 158 / 0.28);
+
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface);
+  --popover-foreground: var(--foreground);
+  --primary: var(--brand);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: var(--surface-2);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--surface-2);
+  --muted-foreground: oklch(0.45 0.01 260);
+  --accent: var(--surface-2);
+  --accent-foreground: var(--foreground);
+  --border: oklch(0 0 0 / 0.09);
+  --input: oklch(0 0 0 / 0.14);
+  --ring: var(--brand);
+}
+
+@utility glass-card {
+  background: color-mix(in oklab, var(--surface) 65%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid var(--color-border);
+}
+
+/* Theme-aware neutral tints so components authored dark-first read well in light mode too */
+.light .bg-white\/\[0\.02\] { background-color: color-mix(in oklab, var(--foreground) 3%, transparent) !important; }
+.light .bg-white\/\[0\.03\] { background-color: color-mix(in oklab, var(--foreground) 4%, transparent) !important; }
+.light .bg-white\/5 { background-color: color-mix(in oklab, var(--foreground) 5%, transparent) !important; }
+.light .border-white\/5 { border-color: color-mix(in oklab, var(--foreground) 8%, transparent) !important; }
+.light .border-white\/10 { border-color: color-mix(in oklab, var(--foreground) 12%, transparent) !important; }
+.light .ring-black\/20 { --tw-ring-color: color-mix(in oklab, var(--foreground) 8%, transparent) !important; }
+
+@utility text-balance {
+  text-wrap: balance;
+}
+
+@utility text-pretty {
+  text-wrap: pretty;
+}
+
+@keyframes hitch-pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+@keyframes hitch-fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hitch-drift {
+  0%, 100% { transform: translate3d(0,0,0); }
+  50% { transform: translate3d(0,-10px,0); }
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
