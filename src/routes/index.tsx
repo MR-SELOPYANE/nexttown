@@ -115,8 +115,11 @@ function Landing() {
       <SiteNav />
       <Hero active={active} setActive={setActive} current={current} />
       <StatStrip />
+      <PartnerLogos />
       <BentoVerticals />
+      <BusinessSegment />
       <TrustSection />
+      <Testimonials />
       <ComplianceStrip />
       <SiteFooter />
     </div>
@@ -169,8 +172,8 @@ function Hero({
           className="text-lg text-muted-foreground max-w-[56ch] text-pretty mb-10"
           style={{ animation: "hitch-fade-up 0.7s ease-out 0.15s both" }}
         >
-          The unified mobility infrastructure for South Africa. One platform for
-          commuters, couriers, heavy-haulage, aviation and school transport.
+          The unified mobility infrastructure for South Africa. One platform for commuters,
+          couriers, heavy-haulage, aviation and school transport.
         </p>
 
         <div
@@ -290,8 +293,8 @@ function BentoVerticals() {
               Built for the complexity of local logistics.
             </h2>
             <p className="text-muted-foreground text-pretty">
-              Specialised tools for every sector of the South African mobility
-              landscape — one identity, one wallet, one control tower.
+              Specialised tools for every sector of the South African mobility landscape — one
+              identity, one wallet, one control tower.
             </p>
           </div>
         </div>
@@ -324,6 +327,155 @@ function BentoVerticals() {
             copy="Live pickup and drop verification, SAPS-checked drivers, monthly billing for parents."
             image={ridesImg}
           />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PartnerLogos() {
+  const partners = [
+    "Goldrush Logistics",
+    "Ndlovu Transport",
+    "Songe Air Charter",
+    "Kodwa Couriers",
+    "Cape Coast Movers",
+    "Tshwane Interlink",
+  ];
+  return (
+    <section className="py-12 px-6 border-b border-white/5">
+      <div className="max-w-7xl mx-auto text-center">
+        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-6">
+          Moving operators &amp; cargo across South Africa
+        </div>
+        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
+          {partners.map((p) => (
+            <span key={p} className="text-lg font-semibold tracking-tight text-muted-foreground/60">
+              {p}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BusinessSegment() {
+  return (
+    <section id="business" className="px-6 py-24 md:py-32 border-t border-white/5">
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <div className="text-brand-light text-[10px] font-bold uppercase tracking-widest mb-3">
+            HITCH SA for Business
+          </div>
+          <h2 className="text-3xl md:text-4xl font-medium mb-4 tracking-tight text-balance">
+            Corporate mobility with one invoice.
+          </h2>
+          <p className="text-muted-foreground text-pretty mb-6">
+            Give teams shared ride wallets, dispatch business parcels, move cargo on return-load
+            corridors and book vetted airport transfers — all reconciled through one control tower
+            and settled on NET-30 terms.
+          </p>
+          <ul className="space-y-2.5 mb-8">
+            {[
+              "Shared team wallets with per-employee limits",
+              "Volume pricing on parcels, freight and charters",
+              "Live dashboards, receipts and VAT-ready invoicing",
+              "API access to book and track from your own systems",
+            ].map((b) => (
+              <li key={b} className="flex items-center gap-3 text-sm text-foreground/80">
+                <span className="size-1 rounded-full bg-brand-light" />
+                {b}
+              </li>
+            ))}
+          </ul>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link
+              to="/register"
+              className="bg-foreground text-background font-medium py-2.5 px-5 flex items-center justify-center gap-2 rounded-lg ring-1 ring-white/10 hover:bg-white/90 transition-colors"
+            >
+              Create a business account <ArrowRight className="size-4" />
+            </Link>
+            <Link
+              to="/support"
+              className="glass-card text-foreground font-medium py-2.5 px-6 rounded-lg hover:bg-white/5 transition-colors"
+            >
+              Talk to sales
+            </Link>
+          </div>
+        </div>
+        <div className="glass-card rounded-2xl p-8 ring-1 ring-black/20">
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { label: "Rides booked", value: "2.1M" },
+              { label: "Parcels shipped", value: "1.4M" },
+              { label: "Freight ton-km", value: "48M" },
+              { label: "Avg. settlement", value: "2.1 days" },
+            ].map((s) => (
+              <div key={s.label} className="rounded-xl border border-white/10 p-5">
+                <div className="text-2xl font-semibold tabular-nums text-brand-light">
+                  {s.value}
+                </div>
+                <div className="text-xs text-muted-foreground mt-1">{s.label}</div>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground mt-6">
+            Operators on HITCH SA settle 88% of gross within 48 hours of trip completion.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Testimonials() {
+  const quotes = [
+    {
+      quote:
+        "My team books airport transfers through the same wallet we use for parcels. One invoice, zero excuses.",
+      name: "Zanele M.",
+      role: "Ops director, Johannesburg",
+    },
+    {
+      quote:
+        "The return-load network filled a corridor I'd been running empty for months. My truck never sits idle now.",
+      name: "Hendrik V.",
+      role: "Truck operator, Durban",
+    },
+    {
+      quote:
+        "Live pickup alerts mean I don't chase the school bus anymore. The SAPS-checked drivers made the decision easy.",
+      name: "Priya N.",
+      role: "Parent, Pretoria",
+    },
+  ];
+  return (
+    <section id="testimonials" className="px-6 py-24 md:py-32 border-t border-white/5">
+      <div className="max-w-7xl mx-auto">
+        <div className="max-w-[48ch] mb-14">
+          <h2 className="text-3xl md:text-4xl font-medium mb-4 tracking-tight text-balance">
+            Moving real people, real cargo.
+          </h2>
+          <p className="text-muted-foreground text-pretty">
+            From commuters to fleet managers — hear it from the people who hitch every day.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {quotes.map((q) => (
+            <figure
+              key={q.name}
+              className="glass-card rounded-2xl p-6 ring-1 ring-black/20 flex flex-col"
+            >
+              <blockquote className="text-sm text-foreground/90 leading-relaxed flex-1">
+                “{q.quote}”
+              </blockquote>
+              <figcaption className="mt-6">
+                <div className="font-semibold text-sm">{q.name}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">{q.role}</div>
+              </figcaption>
+            </figure>
+          ))}
         </div>
       </div>
     </section>
@@ -418,8 +570,8 @@ function TrustSection() {
             Institutional trust. Silicon-Valley speed.
           </h2>
           <p className="text-muted-foreground text-pretty">
-            HITCH SA was engineered against the same standards that regulate our
-            banks — because moving people, cargo and children deserves nothing less.
+            HITCH SA was engineered against the same standards that regulate our banks — because
+            moving people, cargo and children deserves nothing less.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

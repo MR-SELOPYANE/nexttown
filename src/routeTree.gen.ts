@@ -9,133 +9,45 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WalletRouteImport } from './routes/wallet'
-import { Route as TrackRouteImport } from './routes/track'
-import { Route as SupportRouteImport } from './routes/support'
-import { Route as SchoolRouteImport } from './routes/school'
-import { Route as RidesRouteImport } from './routes/rides'
-import { Route as RideRouteImport } from './routes/ride'
-import { Route as RegisterRouteImport } from './routes/register'
-import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as PricingRouteImport } from './routes/pricing'
-import { Route as ParcelsRouteImport } from './routes/parcels'
-import { Route as NotificationsRouteImport } from './routes/notifications'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as FreightRouteImport } from './routes/freight'
-import { Route as FlightsRouteImport } from './routes/flights'
-import { Route as FeaturesRouteImport } from './routes/features'
-import { Route as FaqRouteImport } from './routes/faq'
-import { Route as DriveRouteImport } from './routes/drive'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as CoverageRouteImport } from './routes/coverage'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as CareersRouteImport } from './routes/careers'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AirlineRouteImport } from './routes/airline'
+import { Route as BusinessRouteImport } from './routes/business'
+import { Route as CareersRouteImport } from './routes/careers'
+import { Route as CommuteRouteImport } from './routes/commute'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as DriveRouteImport } from './routes/drive'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as FeaturesRouteImport } from './routes/features'
+import { Route as FlightsRouteImport } from './routes/flights'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as FreightRouteImport } from './routes/freight'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as ParcelsRouteImport } from './routes/parcels'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as RideRouteImport } from './routes/ride'
+import { Route as RidesRouteImport } from './routes/rides'
+import { Route as SchoolRouteImport } from './routes/school'
+import { Route as SchoolOpsRouteImport } from './routes/school-ops'
+import { Route as SupportRouteImport } from './routes/support'
+import { Route as TrackRouteImport } from './routes/track'
+import { Route as TruckRouteImport } from './routes/truck'
+import { Route as VerifyRouteImport } from './routes/verify'
+import { Route as WalletRouteImport } from './routes/wallet'
+import { Route as LegalCookiesRouteImport } from './routes/legal/cookies'
+import { Route as LegalPopiaRouteImport } from './routes/legal/popia'
+import { Route as LegalPrivacyRouteImport } from './routes/legal/privacy'
+import { Route as LegalSecurityRouteImport } from './routes/legal/security'
+import { Route as LegalTermsRouteImport } from './routes/legal/terms'
 
-const WalletRoute = WalletRouteImport.update({
-  id: '/wallet',
-  path: '/wallet',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TrackRoute = TrackRouteImport.update({
-  id: '/track',
-  path: '/track',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SupportRoute = SupportRouteImport.update({
-  id: '/support',
-  path: '/support',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SchoolRoute = SchoolRouteImport.update({
-  id: '/school',
-  path: '/school',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RidesRoute = RidesRouteImport.update({
-  id: '/rides',
-  path: '/rides',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RideRoute = RideRouteImport.update({
-  id: '/ride',
-  path: '/ride',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RegisterRoute = RegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PricingRoute = PricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ParcelsRoute = ParcelsRouteImport.update({
-  id: '/parcels',
-  path: '/parcels',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotificationsRoute = NotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FreightRoute = FreightRouteImport.update({
-  id: '/freight',
-  path: '/freight',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FlightsRoute = FlightsRouteImport.update({
-  id: '/flights',
-  path: '/flights',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FeaturesRoute = FeaturesRouteImport.update({
-  id: '/features',
-  path: '/features',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaqRoute = FaqRouteImport.update({
-  id: '/faq',
-  path: '/faq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DriveRoute = DriveRouteImport.update({
-  id: '/drive',
-  path: '/drive',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CoverageRoute = CoverageRouteImport.update({
-  id: '/coverage',
-  path: '/coverage',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CareersRoute = CareersRouteImport.update({
-  id: '/careers',
-  path: '/careers',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -143,23 +55,187 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AirlineRoute = AirlineRouteImport.update({
+  id: '/airline',
+  path: '/airline',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessRoute = BusinessRouteImport.update({
+  id: '/business',
+  path: '/business',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CareersRoute = CareersRouteImport.update({
+  id: '/careers',
+  path: '/careers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommuteRoute = CommuteRouteImport.update({
+  id: '/commute',
+  path: '/commute',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DriveRoute = DriveRouteImport.update({
+  id: '/drive',
+  path: '/drive',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeaturesRoute = FeaturesRouteImport.update({
+  id: '/features',
+  path: '/features',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FlightsRoute = FlightsRouteImport.update({
+  id: '/flights',
+  path: '/flights',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FreightRoute = FreightRouteImport.update({
+  id: '/freight',
+  path: '/freight',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParcelsRoute = ParcelsRouteImport.update({
+  id: '/parcels',
+  path: '/parcels',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RideRoute = RideRouteImport.update({
+  id: '/ride',
+  path: '/ride',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RidesRoute = RidesRouteImport.update({
+  id: '/rides',
+  path: '/rides',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SchoolRoute = SchoolRouteImport.update({
+  id: '/school',
+  path: '/school',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SchoolOpsRoute = SchoolOpsRouteImport.update({
+  id: '/school-ops',
+  path: '/school-ops',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrackRoute = TrackRouteImport.update({
+  id: '/track',
+  path: '/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TruckRoute = TruckRouteImport.update({
+  id: '/truck',
+  path: '/truck',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyRoute = VerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WalletRoute = WalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalCookiesRoute = LegalCookiesRouteImport.update({
+  id: '/legal/cookies',
+  path: '/legal/cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalPopiaRoute = LegalPopiaRouteImport.update({
+  id: '/legal/popia',
+  path: '/legal/popia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalPrivacyRoute = LegalPrivacyRouteImport.update({
+  id: '/legal/privacy',
+  path: '/legal/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalSecurityRoute = LegalSecurityRouteImport.update({
+  id: '/legal/security',
+  path: '/legal/security',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalTermsRoute = LegalTermsRouteImport.update({
+  id: '/legal/terms',
+  path: '/legal/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/airline': typeof AirlineRoute
+  '/business': typeof BusinessRoute
   '/careers': typeof CareersRoute
+  '/commute': typeof CommuteRoute
   '/contact': typeof ContactRoute
-  '/coverage': typeof CoverageRoute
   '/dashboard': typeof DashboardRoute
   '/drive': typeof DriveRoute
   '/faq': typeof FaqRoute
   '/features': typeof FeaturesRoute
   '/flights': typeof FlightsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/freight': typeof FreightRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
@@ -170,21 +246,33 @@ export interface FileRoutesByFullPath {
   '/ride': typeof RideRoute
   '/rides': typeof RidesRoute
   '/school': typeof SchoolRoute
+  '/school-ops': typeof SchoolOpsRoute
   '/support': typeof SupportRoute
   '/track': typeof TrackRoute
+  '/truck': typeof TruckRoute
+  '/verify': typeof VerifyRoute
   '/wallet': typeof WalletRoute
+  '/legal/cookies': typeof LegalCookiesRoute
+  '/legal/popia': typeof LegalPopiaRoute
+  '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/security': typeof LegalSecurityRoute
+  '/legal/terms': typeof LegalTermsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/airline': typeof AirlineRoute
+  '/business': typeof BusinessRoute
   '/careers': typeof CareersRoute
+  '/commute': typeof CommuteRoute
   '/contact': typeof ContactRoute
-  '/coverage': typeof CoverageRoute
   '/dashboard': typeof DashboardRoute
   '/drive': typeof DriveRoute
   '/faq': typeof FaqRoute
   '/features': typeof FeaturesRoute
   '/flights': typeof FlightsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/freight': typeof FreightRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
@@ -195,22 +283,34 @@ export interface FileRoutesByTo {
   '/ride': typeof RideRoute
   '/rides': typeof RidesRoute
   '/school': typeof SchoolRoute
+  '/school-ops': typeof SchoolOpsRoute
   '/support': typeof SupportRoute
   '/track': typeof TrackRoute
+  '/truck': typeof TruckRoute
+  '/verify': typeof VerifyRoute
   '/wallet': typeof WalletRoute
+  '/legal/cookies': typeof LegalCookiesRoute
+  '/legal/popia': typeof LegalPopiaRoute
+  '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/security': typeof LegalSecurityRoute
+  '/legal/terms': typeof LegalTermsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/airline': typeof AirlineRoute
+  '/business': typeof BusinessRoute
   '/careers': typeof CareersRoute
+  '/commute': typeof CommuteRoute
   '/contact': typeof ContactRoute
-  '/coverage': typeof CoverageRoute
   '/dashboard': typeof DashboardRoute
   '/drive': typeof DriveRoute
   '/faq': typeof FaqRoute
   '/features': typeof FeaturesRoute
   '/flights': typeof FlightsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/freight': typeof FreightRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
@@ -221,23 +321,35 @@ export interface FileRoutesById {
   '/ride': typeof RideRoute
   '/rides': typeof RidesRoute
   '/school': typeof SchoolRoute
+  '/school-ops': typeof SchoolOpsRoute
   '/support': typeof SupportRoute
   '/track': typeof TrackRoute
+  '/truck': typeof TruckRoute
+  '/verify': typeof VerifyRoute
   '/wallet': typeof WalletRoute
+  '/legal/cookies': typeof LegalCookiesRoute
+  '/legal/popia': typeof LegalPopiaRoute
+  '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/security': typeof LegalSecurityRoute
+  '/legal/terms': typeof LegalTermsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/admin'
+    | '/airline'
+    | '/business'
     | '/careers'
+    | '/commute'
     | '/contact'
-    | '/coverage'
     | '/dashboard'
     | '/drive'
     | '/faq'
     | '/features'
     | '/flights'
+    | '/forgot-password'
     | '/freight'
     | '/login'
     | '/notifications'
@@ -248,21 +360,33 @@ export interface FileRouteTypes {
     | '/ride'
     | '/rides'
     | '/school'
+    | '/school-ops'
     | '/support'
     | '/track'
+    | '/truck'
+    | '/verify'
     | '/wallet'
+    | '/legal/cookies'
+    | '/legal/popia'
+    | '/legal/privacy'
+    | '/legal/security'
+    | '/legal/terms'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/admin'
+    | '/airline'
+    | '/business'
     | '/careers'
+    | '/commute'
     | '/contact'
-    | '/coverage'
     | '/dashboard'
     | '/drive'
     | '/faq'
     | '/features'
     | '/flights'
+    | '/forgot-password'
     | '/freight'
     | '/login'
     | '/notifications'
@@ -273,21 +397,33 @@ export interface FileRouteTypes {
     | '/ride'
     | '/rides'
     | '/school'
+    | '/school-ops'
     | '/support'
     | '/track'
+    | '/truck'
+    | '/verify'
     | '/wallet'
+    | '/legal/cookies'
+    | '/legal/popia'
+    | '/legal/privacy'
+    | '/legal/security'
+    | '/legal/terms'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/admin'
+    | '/airline'
+    | '/business'
     | '/careers'
+    | '/commute'
     | '/contact'
-    | '/coverage'
     | '/dashboard'
     | '/drive'
     | '/faq'
     | '/features'
     | '/flights'
+    | '/forgot-password'
     | '/freight'
     | '/login'
     | '/notifications'
@@ -298,22 +434,34 @@ export interface FileRouteTypes {
     | '/ride'
     | '/rides'
     | '/school'
+    | '/school-ops'
     | '/support'
     | '/track'
+    | '/truck'
+    | '/verify'
     | '/wallet'
+    | '/legal/cookies'
+    | '/legal/popia'
+    | '/legal/privacy'
+    | '/legal/security'
+    | '/legal/terms'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRoute
+  AirlineRoute: typeof AirlineRoute
+  BusinessRoute: typeof BusinessRoute
   CareersRoute: typeof CareersRoute
+  CommuteRoute: typeof CommuteRoute
   ContactRoute: typeof ContactRoute
-  CoverageRoute: typeof CoverageRoute
   DashboardRoute: typeof DashboardRoute
   DriveRoute: typeof DriveRoute
   FaqRoute: typeof FaqRoute
   FeaturesRoute: typeof FeaturesRoute
   FlightsRoute: typeof FlightsRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   FreightRoute: typeof FreightRoute
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
@@ -324,158 +472,26 @@ export interface RootRouteChildren {
   RideRoute: typeof RideRoute
   RidesRoute: typeof RidesRoute
   SchoolRoute: typeof SchoolRoute
+  SchoolOpsRoute: typeof SchoolOpsRoute
   SupportRoute: typeof SupportRoute
   TrackRoute: typeof TrackRoute
+  TruckRoute: typeof TruckRoute
+  VerifyRoute: typeof VerifyRoute
   WalletRoute: typeof WalletRoute
+  LegalCookiesRoute: typeof LegalCookiesRoute
+  LegalPopiaRoute: typeof LegalPopiaRoute
+  LegalPrivacyRoute: typeof LegalPrivacyRoute
+  LegalSecurityRoute: typeof LegalSecurityRoute
+  LegalTermsRoute: typeof LegalTermsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/wallet': {
-      id: '/wallet'
-      path: '/wallet'
-      fullPath: '/wallet'
-      preLoaderRoute: typeof WalletRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/track': {
-      id: '/track'
-      path: '/track'
-      fullPath: '/track'
-      preLoaderRoute: typeof TrackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/support': {
-      id: '/support'
-      path: '/support'
-      fullPath: '/support'
-      preLoaderRoute: typeof SupportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/school': {
-      id: '/school'
-      path: '/school'
-      fullPath: '/school'
-      preLoaderRoute: typeof SchoolRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rides': {
-      id: '/rides'
-      path: '/rides'
-      fullPath: '/rides'
-      preLoaderRoute: typeof RidesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ride': {
-      id: '/ride'
-      path: '/ride'
-      fullPath: '/ride'
-      preLoaderRoute: typeof RideRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/parcels': {
-      id: '/parcels'
-      path: '/parcels'
-      fullPath: '/parcels'
-      preLoaderRoute: typeof ParcelsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notifications': {
-      id: '/notifications'
-      path: '/notifications'
-      fullPath: '/notifications'
-      preLoaderRoute: typeof NotificationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/freight': {
-      id: '/freight'
-      path: '/freight'
-      fullPath: '/freight'
-      preLoaderRoute: typeof FreightRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/flights': {
-      id: '/flights'
-      path: '/flights'
-      fullPath: '/flights'
-      preLoaderRoute: typeof FlightsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/features': {
-      id: '/features'
-      path: '/features'
-      fullPath: '/features'
-      preLoaderRoute: typeof FeaturesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faq': {
-      id: '/faq'
-      path: '/faq'
-      fullPath: '/faq'
-      preLoaderRoute: typeof FaqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/drive': {
-      id: '/drive'
-      path: '/drive'
-      fullPath: '/drive'
-      preLoaderRoute: typeof DriveRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/coverage': {
-      id: '/coverage'
-      path: '/coverage'
-      fullPath: '/coverage'
-      preLoaderRoute: typeof CoverageRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/careers': {
-      id: '/careers'
-      path: '/careers'
-      fullPath: '/careers'
-      preLoaderRoute: typeof CareersRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -485,11 +501,235 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/airline': {
+      id: '/airline'
+      path: '/airline'
+      fullPath: '/airline'
+      preLoaderRoute: typeof AirlineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business': {
+      id: '/business'
+      path: '/business'
+      fullPath: '/business'
+      preLoaderRoute: typeof BusinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/careers': {
+      id: '/careers'
+      path: '/careers'
+      fullPath: '/careers'
+      preLoaderRoute: typeof CareersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/commute': {
+      id: '/commute'
+      path: '/commute'
+      fullPath: '/commute'
+      preLoaderRoute: typeof CommuteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/drive': {
+      id: '/drive'
+      path: '/drive'
+      fullPath: '/drive'
+      preLoaderRoute: typeof DriveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/features': {
+      id: '/features'
+      path: '/features'
+      fullPath: '/features'
+      preLoaderRoute: typeof FeaturesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/flights': {
+      id: '/flights'
+      path: '/flights'
+      fullPath: '/flights'
+      preLoaderRoute: typeof FlightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/freight': {
+      id: '/freight'
+      path: '/freight'
+      fullPath: '/freight'
+      preLoaderRoute: typeof FreightRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parcels': {
+      id: '/parcels'
+      path: '/parcels'
+      fullPath: '/parcels'
+      preLoaderRoute: typeof ParcelsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ride': {
+      id: '/ride'
+      path: '/ride'
+      fullPath: '/ride'
+      preLoaderRoute: typeof RideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rides': {
+      id: '/rides'
+      path: '/rides'
+      fullPath: '/rides'
+      preLoaderRoute: typeof RidesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/school': {
+      id: '/school'
+      path: '/school'
+      fullPath: '/school'
+      preLoaderRoute: typeof SchoolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/school-ops': {
+      id: '/school-ops'
+      path: '/school-ops'
+      fullPath: '/school-ops'
+      preLoaderRoute: typeof SchoolOpsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/track': {
+      id: '/track'
+      path: '/track'
+      fullPath: '/track'
+      preLoaderRoute: typeof TrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/truck': {
+      id: '/truck'
+      path: '/truck'
+      fullPath: '/truck'
+      preLoaderRoute: typeof TruckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify': {
+      id: '/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wallet': {
+      id: '/wallet'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof WalletRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/cookies': {
+      id: '/legal/cookies'
+      path: '/legal/cookies'
+      fullPath: '/legal/cookies'
+      preLoaderRoute: typeof LegalCookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/popia': {
+      id: '/legal/popia'
+      path: '/legal/popia'
+      fullPath: '/legal/popia'
+      preLoaderRoute: typeof LegalPopiaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/privacy': {
+      id: '/legal/privacy'
+      path: '/legal/privacy'
+      fullPath: '/legal/privacy'
+      preLoaderRoute: typeof LegalPrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/security': {
+      id: '/legal/security'
+      path: '/legal/security'
+      fullPath: '/legal/security'
+      preLoaderRoute: typeof LegalSecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/terms': {
+      id: '/legal/terms'
+      path: '/legal/terms'
+      fullPath: '/legal/terms'
+      preLoaderRoute: typeof LegalTermsRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -498,14 +738,18 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRoute,
+  AirlineRoute: AirlineRoute,
+  BusinessRoute: BusinessRoute,
   CareersRoute: CareersRoute,
+  CommuteRoute: CommuteRoute,
   ContactRoute: ContactRoute,
-  CoverageRoute: CoverageRoute,
   DashboardRoute: DashboardRoute,
   DriveRoute: DriveRoute,
   FaqRoute: FaqRoute,
   FeaturesRoute: FeaturesRoute,
   FlightsRoute: FlightsRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   FreightRoute: FreightRoute,
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
@@ -516,9 +760,17 @@ const rootRouteChildren: RootRouteChildren = {
   RideRoute: RideRoute,
   RidesRoute: RidesRoute,
   SchoolRoute: SchoolRoute,
+  SchoolOpsRoute: SchoolOpsRoute,
   SupportRoute: SupportRoute,
   TrackRoute: TrackRoute,
+  TruckRoute: TruckRoute,
+  VerifyRoute: VerifyRoute,
   WalletRoute: WalletRoute,
+  LegalCookiesRoute: LegalCookiesRoute,
+  LegalPopiaRoute: LegalPopiaRoute,
+  LegalPrivacyRoute: LegalPrivacyRoute,
+  LegalSecurityRoute: LegalSecurityRoute,
+  LegalTermsRoute: LegalTermsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

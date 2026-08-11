@@ -3,7 +3,11 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { ArrowDownLeft, ArrowUpRight, Banknote, Wallet as WalletIcon } from "lucide-react";
 import { PageShell, PageHeader } from "@/components/site/page-shell";
-import { useDemo, zar } from "@/lib/demo-store";
+import { RequireAuth } from "@/components/site/require-auth";
+import { TxnStatusPill } from "@/components/site/status";
+import { useTopUp, useTxns, useWallet, useWithdraw } from "@/lib/hooks/queries";
+import { useAuth } from "@/lib/store/auth-context";
+import { zar } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -19,7 +23,8 @@ export const Route = createFileRoute("/wallet")({
       { property: "og:title", content: "HITCH SA Wallet" },
       {
         property: "og:description",
-        content: "Top up, pay for trips and withdraw operator earnings in one South African mobility wallet.",
+        content:
+          "Top up, pay for trips and withdraw operator earnings in one South African mobility wallet.",
       },
     ],
   }),
@@ -27,14 +32,34 @@ export const Route = createFileRoute("/wallet")({
 });
 
 const PRESETS = [100, 250, 500, 1000];
-const METHODS = ["Ozow", "PayFast", "Card"] as const;
+const METHODS = [
+  { label: "Ozow", key: "ozow" },
+  { label: "PayFast", key: "payfast" },
+  { label: "Card", key: "card" },
+] as const;
 
 function WalletPage() {
-  const { balance, txns, topUp, withdraw } = useDemo();
+  return (
+    <RequireAuth>
+      <WalletInner />
+    </RequireAuth>
+  );
+}
+
+function WalletInner() {
+  const { user } = useAuth();
+  const userId = user?.id ?? "";
+  const { data: wallet } = useWallet(userId);
+  const { data: txns = [] } = useTxns(userId);
+  const topUp = useTopUp(userId);
+  const withdraw = useWithdraw(userId);
+
   const [amount, setAmount] = useState("250");
-  const [method, setMethod] = useState<(typeof METHODS)[number]>("Ozow");
+  const [method, setMethod] = useState<(typeof METHODS)[number]["key"]>("ozow");
+  const methodLabel = METHODS.find((m) => m.key === method)?.label ?? "Ozow";
 
   const value = Math.max(0, Number(amount) || 0);
+  const balance = wallet?.balance ?? 0;
   const inflow = txns.filter((t) => t.amount > 0).reduce((a, t) => a + t.amount, 0);
   const outflow = txns.filter((t) => t.amount < 0).reduce((a, t) => a - t.amount, 0);
 
@@ -91,15 +116,15 @@ function WalletPage() {
             <div className="flex flex-wrap gap-2 mb-5">
               {METHODS.map((m) => (
                 <button
-                  key={m}
-                  onClick={() => setMethod(m)}
+                  key={m.key}
+                  onClick={() => setMethod(m.key)}
                   className={`px-3 py-1.5 rounded-lg text-sm border transition-colors ${
-                    method === m
+                    method === m.key
                       ? "border-brand/50 bg-brand/15 text-brand-light"
                       : "border-white/10 text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  {m}
+                  {m.label}
                 </button>
               ))}
             </div>
@@ -107,19 +132,26 @@ function WalletPage() {
               <Button
                 className="bg-brand hover:bg-brand-light text-white"
                 disabled={value <= 0}
-                onClick={() => {
-                  topUp(value, method);
-                  toast.success(`${zar(value)} added via ${method}`);
-                }}
+                onClick={() =>
+                  topUp.mutate(
+                    { amount: value, method },
+                    {
+                      onSuccess: () => toast.success(`${zar(value)} added via ${methodLabel}`),
+                      onError: (e) => toast.error(e.message),
+                    },
+                  )
+                }
               >
                 Top up {zar(value)}
               </Button>
               <Button
                 variant="outline"
-                onClick={() => {
-                  if (withdraw(value)) toast.success(`Payout of ${zar(value)} queued`);
-                  else toast.error("Insufficient balance for that payout");
-                }}
+                onClick={() =>
+                  withdraw.mutate(value, {
+                    onSuccess: () => toast.success(`Payout of ${zar(value)} queued`),
+                    onError: (e) => toast.error(e.message),
+                  })
+                }
               >
                 <Banknote className="size-4" /> Withdraw
               </Button>
@@ -154,12 +186,14 @@ function WalletPage() {
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium truncate">{t.label}</div>
                   <div className="text-xs text-muted-foreground">
-                    {t.method} · {new Date(t.createdAt).toLocaleDateString("en-ZA")}
+                    {t.method.charAt(0).toUpperCase() + t.method.slice(1)} ·{" "}
+                    {new Date(t.createdAt).toLocaleDateString("en-ZA")}
+                  </div>
+                  <div className="mt-1">
+                    <TxnStatusPill status={t.status} />
                   </div>
                 </div>
-                <div
-                  className={`text-sm font-semibold ${t.amount > 0 ? "text-brand-light" : ""}`}
-                >
+                <div className={`text-sm font-semibold ${t.amount > 0 ? "text-brand-light" : ""}`}>
                   {t.amount > 0 ? "+" : "−"} {zar(Math.abs(t.amount))}
                 </div>
               </div>

@@ -67,28 +67,6 @@ export function interpolate(a: LatLng, b: LatLng, t: number): LatLng {
   return { lat: a.lat + (b.lat - a.lat) * t, lng: a.lng + (b.lng - a.lng) * t };
 }
 
-export const HUBS: { name: string; province: string; coords: LatLng; volume: string }[] = [
-  { name: "Johannesburg", province: "Gauteng", coords: SA_PLACES.johannesburg, volume: "2 140 daily trips" },
-  { name: "Pretoria", province: "Gauteng", coords: SA_PLACES.pretoria, volume: "890 daily trips" },
-  { name: "Cape Town", province: "Western Cape", coords: SA_PLACES["cape town"], volume: "1 420 daily trips" },
-  { name: "Durban", province: "KwaZulu-Natal", coords: SA_PLACES.durban, volume: "1 060 daily trips" },
-  { name: "Gqeberha", province: "Eastern Cape", coords: SA_PLACES.gqeberha, volume: "410 daily trips" },
-  { name: "Bloemfontein", province: "Free State", coords: SA_PLACES.bloemfontein, volume: "300 daily trips" },
-  { name: "Polokwane", province: "Limpopo", coords: SA_PLACES.polokwane, volume: "260 daily trips" },
-  { name: "Mbombela", province: "Mpumalanga", coords: SA_PLACES.mbombela, volume: "215 daily trips" },
-  { name: "Kimberley", province: "Northern Cape", coords: SA_PLACES.kimberley, volume: "120 daily trips" },
-  { name: "Rustenburg", province: "North West", coords: SA_PLACES.rustenburg, volume: "180 daily trips" },
-];
-
-export const CORRIDORS: { name: string; path: [LatLng, LatLng]; load: string }[] = [
-  { name: "N3 · JHB ↔ Durban", path: [SA_PLACES.johannesburg, SA_PLACES.durban], load: "Freight heavy" },
-  { name: "N1 · JHB ↔ Cape Town", path: [SA_PLACES.johannesburg, SA_PLACES["cape town"]], load: "Long-haul" },
-  { name: "N2 · Cape Town ↔ Gqeberha", path: [SA_PLACES["cape town"], SA_PLACES.gqeberha], load: "Coastal" },
-  { name: "N1 · JHB ↔ Polokwane", path: [SA_PLACES.johannesburg, SA_PLACES.polokwane], load: "Commuter" },
-  { name: "N4 · Pretoria ↔ Mbombela", path: [SA_PLACES.pretoria, SA_PLACES.mbombela], load: "Cross-border" },
-  { name: "Cross-border · JHB ↔ Gaborone", path: [SA_PLACES.johannesburg, SA_PLACES.gaborone], load: "SADC" },
-];
-
 /** Great-circle distance in km between two points. */
 export function distanceKm(a: LatLng, b: LatLng): number {
   const R = 6371;
@@ -99,6 +77,18 @@ export function distanceKm(a: LatLng, b: LatLng): number {
   const h =
     Math.sin(dLat / 2) ** 2 + Math.cos(la1) * Math.cos(la2) * Math.sin(dLng / 2) ** 2;
   return Math.round(2 * R * Math.asin(Math.sqrt(h)) * 10) / 10;
+}
+
+/** Nearest known place to a GPS coordinate within radiusKm, or null if none. */
+export function nearestPlace(latLng: LatLng, radiusKm = 80): string | null {
+  let best: { name: string; d: number } | null = null;
+  for (const [name, coords] of Object.entries(SA_PLACES)) {
+    if (name.length <= 3) continue; // skip short aliases
+    const d = distanceKm(latLng, coords);
+    if (!best || d < best.d) best = { name, d };
+  }
+  if (!best || best.d > radiusKm) return null;
+  return best.name.replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 /** Suggestion list for place inputs. */

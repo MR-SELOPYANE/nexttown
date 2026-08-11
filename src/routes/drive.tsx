@@ -4,6 +4,7 @@ import { PageShell } from "@/components/site/page-shell";
 import { LiveMap } from "@/components/site/maps";
 import { useDemo, zar } from "@/lib/demo-store";
 import { distanceKm, lookupPlace, SA_PLACES, type LatLng } from "@/lib/sa-places";
+import { OperatorListings } from "@/components/site/operator-listings";
 import {
   CheckCircle2,
   Clock,
@@ -42,9 +43,27 @@ type Phase = "idle" | "offer" | "topickup" | "ontrip" | "complete";
 
 const REQUESTS = [
   { rider: "Lerato N.", rating: 4.9, pickup: "Sandton", dropoff: "OR Tambo", note: "2 bags" },
-  { rider: "Johan V.", rating: 4.7, pickup: "Rosebank", dropoff: "Midrand", note: "Corporate wallet" },
-  { rider: "Zanele P.", rating: 5.0, pickup: "Centurion", dropoff: "Pretoria", note: "Airport pickup" },
-  { rider: "Ahmed S.", rating: 4.8, pickup: "Soweto", dropoff: "Johannesburg", note: "Cash disabled" },
+  {
+    rider: "Johan V.",
+    rating: 4.7,
+    pickup: "Rosebank",
+    dropoff: "Midrand",
+    note: "Corporate wallet",
+  },
+  {
+    rider: "Zanele P.",
+    rating: 5.0,
+    pickup: "Centurion",
+    dropoff: "Pretoria",
+    note: "Airport pickup",
+  },
+  {
+    rider: "Ahmed S.",
+    rating: 4.8,
+    pickup: "Soweto",
+    dropoff: "Johannesburg",
+    note: "Cash disabled",
+  },
 ];
 
 function fareFor(from: LatLng, to: LatLng) {
@@ -91,7 +110,6 @@ function DrivePage() {
 
   useEffect(() => {
     if (phase === "offer" && countdown <= 0) declineOffer();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countdown, phase]);
 
   // trip progress
@@ -225,8 +243,16 @@ function DrivePage() {
                     </div>
                   </div>
                   <div className="space-y-2 text-sm">
-                    <Leg icon={<span className="size-2.5 rounded-full bg-brand" />} label={req.pickup} sub="4 min away" />
-                    <Leg icon={<MapPin className="size-3.5 text-amber-400" />} label={req.dropoff} sub={`${km} km · ${mins} min`} />
+                    <Leg
+                      icon={<span className="size-2.5 rounded-full bg-brand" />}
+                      label={req.pickup}
+                      sub="4 min away"
+                    />
+                    <Leg
+                      icon={<MapPin className="size-3.5 text-amber-400" />}
+                      label={req.dropoff}
+                      sub={`${km} km · ${mins} min`}
+                    />
                   </div>
                   <div className="flex gap-2">
                     <button
@@ -284,7 +310,10 @@ function DrivePage() {
                     {phase === "topickup" ? req.pickup : `${req.pickup} → ${req.dropoff}`}
                   </div>
                   <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
-                    <div className="h-full bg-brand transition-all" style={{ width: `${progress}%` }} />
+                    <div
+                      className="h-full bg-brand transition-all"
+                      style={{ width: `${progress}%` }}
+                    />
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     <Metric icon={Wallet} label="Payout" value={zar(payout)} />
@@ -351,6 +380,16 @@ function DrivePage() {
                 ))}
               </div>
             </div>
+
+            <OperatorListings
+              title="Future trips"
+              subtitle="Plan a long trip you'll drive later and sell seats on the marketplace."
+              markets={["ride"]}
+              postCta="Post a future trip"
+              capacityLabel="Seats"
+              priceLabel="Rate per seat (ZAR)"
+              tags={["Driver trip", "Verified driver"]}
+            />
           </aside>
         </div>
       </section>
@@ -385,3 +424,4 @@ function Metric({
     </div>
   );
 }
+

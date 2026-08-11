@@ -1,14 +1,25 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { MapPin, Navigation, Phone, ShieldAlert, Star } from "lucide-react";
+import { Check, Copy, Phone, QrCode, ShieldAlert, Star } from "lucide-react";
 import { PageShell, PageHeader } from "@/components/site/page-shell";
 import { LiveMap } from "@/components/site/maps";
+import { RequireAuth } from "@/components/site/require-auth";
+import { RatingPanel, ReviewSummary } from "@/components/site/rating-panel";
 import { parseRoute } from "@/lib/sa-places";
-import { useDemo, zar } from "@/lib/demo-store";
+import {
+  useAdvanceBooking,
+  useBookings,
+  useCompleteParcel,
+  useReviewBooking,
+  useTriggerSos,
+} from "@/lib/hooks/queries";
+import { useAuth } from "@/lib/store/auth-context";
+import { zar } from "@/lib/format";
+import type { Booking } from "@/lib/domain/types";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/track")({
   head: () => ({
@@ -38,9 +49,27 @@ const DRIVERS = [
 ];
 
 function TrackPage() {
-  const { bookings, advanceBooking, rateBooking, triggerSos, emergencyContact } = useDemo();
+  return (
+    <RequireAuth>
+      <TrackInner />
+    </RequireAuth>
+  );
+}
+
+function TrackInner() {
+  const { user } = useAuth();
+  const userId = user?.id ?? "";
+  const { data: bookings = [] } = useBookings(userId);
+  const advance = useAdvanceBooking(userId);
+  const review = useReviewBooking(userId);
+  const pod = useCompleteParcel(userId);
+  const sos = useTriggerSos(userId);
+
   const active = useMemo(
-    () => bookings.filter((b) => b.status === "confirmed" || b.status === "in-transit"),
+    () =>
+      bookings.filter(
+        (b) => b.status === "requested" || b.status === "confirmed" || b.status === "in_transit",
+      ),
     [bookings],
   );
   const recent = useMemo(() => bookings.filter((b) => b.status === "completed"), [bookings]);
@@ -49,7 +78,7 @@ function TrackPage() {
 
   const [progress, setProgress] = useState(18);
   useEffect(() => {
-    setProgress(current?.status === "in-transit" ? 62 : 18);
+    setProgress(current?.status === "in_transit" ? 62 : 18);
   }, [current?.id, current?.status]);
 
   useEffect(() => {
@@ -59,16 +88,21 @@ function TrackPage() {
   }, [current?.id, current?.status]);
 
   const driver = DRIVERS[(current?.ref.charCodeAt(3) ?? 0) % DRIVERS.length];
-  const geo = useMemo(() => parseRoute(current?.title ?? "Johannesburg → Pretoria"), [current?.title]);
+  const geo = useMemo(
+    () => parseRoute(current?.title ?? "Johannesburg → Pretoria"),
+    [current?.title],
+  );
   const stageIndex = current
-
     ? current.status === "completed"
       ? 4
-      : current.status === "in-transit"
+      : current.status === "in_transit"
         ? 3
-        : 1
+        : current.status === "confirmed"
+          ? 1
+          : 0
     : 0;
   const eta = Math.max(1, Math.round(((100 - progress) / 100) * 42));
+  const emergency = user?.emergencyContact || user?.emergencyNumber || "";
 
   return (
     <PageShell>
@@ -137,7 +171,6 @@ function TrackPage() {
                 </div>
               </div>
 
-
               <div className="p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
@@ -152,7 +185,10 @@ function TrackPage() {
                     </div>
                   </div>
                 </div>
-                <Progress value={current.status === "completed" ? 100 : progress} className="mt-5" />
+                <Progress
+                  value={current.status === "completed" ? 100 : progress}
+                  className="mt-5"
+                />
                 <div className="grid grid-cols-5 gap-2 mt-4 text-[11px]">
                   {STAGES.map((s, i) => (
                     <div
@@ -188,14 +224,18 @@ function TrackPage() {
                   <Button variant="outline" size="sm" onClick={() => toast("Calling operator…")}>
                     <Phone className="size-4" /> Call
                   </Button>
-                  <Button
-                    size="sm"
-                    className="bg-brand hover:bg-brand-light text-white"
-                    disabled={current.status === "completed" || current.status === "cancelled"}
-                    onClick={() => advanceBooking(current.id)}
-                  >
-                    Advance status
-                  </Button>
+                  {!(current.type === "parcel" && current.status === "in_transit") && (
+                    <Button
+                      size="sm"
+                      className="bg-brand hover:bg-brand-light text-white"
+                      disabled={current.status === "completed" || current.status === "cancelled"}
+                      onClick={() => advance.mutate(current.id)}
+                    >
+                      {current.type === "parcel" && current.status === "confirmed"
+                        ? "Mark picked up"
+                        : "Advance status"}
+                    </Button>
+                  )}
                 </div>
                 <div className="text-sm text-muted-foreground mt-5">
                   Fare {zar(current.price)} · paid on completion
@@ -205,14 +245,14 @@ function TrackPage() {
               <div className="glass-card rounded-2xl p-6 border border-white/10">
                 <h3 className="font-semibold mb-2">Safety</h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  {emergencyContact
-                    ? `Emergency contact on file: ${emergencyContact}`
+                  {emergency
+                    ? `Emergency contact on file: ${emergency}`
                     : "Add an emergency contact in your profile for automatic alerts."}
                 </p>
                 <Button
                   variant="destructive"
                   onClick={() => {
-                    triggerSos(current.title);
+                    sos.mutate(current.title);
                     toast.error("SOS sent to the HITCH SA safety desk");
                   }}
                 >
@@ -225,31 +265,40 @@ function TrackPage() {
                 </div>
                 {current.status === "completed" && (
                   <div className="mt-6 border-t border-white/10 pt-4">
-                    <div className="text-sm font-medium mb-2">Rate this trip</div>
-                    <div className="flex gap-1">
-                      {[1, 2, 3, 4, 5].map((n) => (
-                        <button
-                          key={n}
-                          aria-label={`Rate ${n} stars`}
-                          onClick={() => {
-                            rateBooking(current.id, n);
-                            toast.success("Thanks for the feedback");
-                          }}
-                        >
-                          <Star
-                            className={`size-5 ${
-                              (current.rating ?? 0) >= n
-                                ? "fill-current text-brand-light"
-                                : "text-muted-foreground"
-                            }`}
-                          />
-                        </button>
-                      ))}
-                    </div>
+                    {current.review ? (
+                      <>
+                        <div className="text-sm font-medium mb-3">Your review</div>
+                        <ReviewSummary review={current.review} />
+                      </>
+                    ) : (
+                      <RatingPanel
+                        busy={review.isPending}
+                        onSubmit={(r) => {
+                          review.mutate({ id: current.id, review: r });
+                          toast.success("Review submitted — thank you");
+                        }}
+                      />
+                    )}
                   </div>
                 )}
               </div>
             </div>
+
+            {current.type === "parcel" && current.status === "in_transit" && (
+              <ParcelPodCard
+                booking={current}
+                pending={pod.isPending}
+                onConfirm={(code) => {
+                  pod.mutate(
+                    { id: current.id, code },
+                    {
+                      onSuccess: () => toast.success("Delivery confirmed — escrow released"),
+                      onError: (e) => toast.error(e instanceof Error ? e.message : "Invalid OTP"),
+                    },
+                  );
+                }}
+              />
+            )}
           </div>
         ) : (
           <div className="glass-card rounded-2xl p-10 border border-white/10 text-center text-muted-foreground">
@@ -258,5 +307,111 @@ function TrackPage() {
         )}
       </section>
     </PageShell>
+  );
+}
+
+/** Deterministic pseudo-QR rendered from the booking id — scan or read the OTP. */
+function qrMatrix(seed: string): boolean[][] {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  const size = 13;
+  const cells: boolean[][] = [];
+  for (let r = 0; r < size; r++) {
+    cells.push([]);
+    for (let c = 0; c < size; c++) {
+      const inFinder = (r < 4 && c < 4) || (r < 4 && c >= size - 4) || (r >= size - 4 && c < 4);
+      if (inFinder) {
+        const rr = r < 4 ? r : r - (size - 4);
+        const cc = c < 4 ? c : c - (size - 4);
+        cells[r].push(rr === 0 || rr === 3 || cc === 0 || cc === 3);
+        continue;
+      }
+      h = (h * 31 + 7) >>> 0;
+      cells[r].push((h >>> (c % 16)) % 2 === 0);
+    }
+  }
+  return cells;
+}
+
+function ParcelPodCard({
+  booking,
+  pending,
+  onConfirm,
+}: {
+  booking: Booking;
+  pending: boolean;
+  onConfirm: (code: string) => void;
+}) {
+  const [code, setCode] = useState("");
+  const [copied, setCopied] = useState(false);
+  const matrix = useMemo(() => qrMatrix(booking.id), [booking.id]);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard?.writeText(booking.podCode ?? "");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      toast.info(`POD code: ${booking.podCode}`);
+    }
+  };
+
+  return (
+    <div className="glass-card rounded-2xl p-6 border border-white/10">
+      <div className="flex items-center gap-2 mb-4">
+        <QrCode className="size-5 text-brand-light" />
+        <h3 className="font-semibold">Proof of delivery</h3>
+      </div>
+      <div className="grid md:grid-cols-[auto_1fr] gap-6 items-start">
+        <div className="rounded-xl bg-white p-3 w-fit">
+          <div className="grid grid-cols-13 gap-[2px]" style={{ gridTemplateColumns: "repeat(13, minmax(0,1fr))" }}>
+            {matrix.flatMap((row, r) =>
+              row.map((cell, c) => (
+                <span
+                  key={`${r}-${c}`}
+                  className={cn("size-2.5", cell ? "bg-slate-900" : "bg-white")}
+                />
+              )),
+            )}
+          </div>
+        </div>
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Hand the courier this code when they deliver. They verify it to release escrow to
+            your courier.{" "}
+            {booking.parcelDetails && (
+              <span className="block mt-1 text-xs text-muted-foreground/80">
+                Parcel note: “{booking.parcelDetails}”
+              </span>
+            )}
+          </p>
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-2xl font-semibold tracking-[0.3em] text-brand-light">
+              {booking.podCode}
+            </span>
+            <Button variant="outline" size="sm" onClick={copy}>
+              {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+              {copied ? "Copied" : "Copy"}
+            </Button>
+          </div>
+          <div className="flex gap-2">
+            <input
+              value={code}
+              onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+              placeholder="Enter courier OTP"
+              inputMode="numeric"
+              className="w-40 h-10 rounded-lg bg-white/[0.03] border border-white/10 px-3 text-sm font-mono text-foreground focus:outline-none focus:ring-2 focus:ring-brand/60"
+            />
+            <Button
+              className="bg-brand hover:bg-brand-light text-white"
+              disabled={code.length < 6 || pending}
+              onClick={() => onConfirm(code)}
+            >
+              {pending ? "Verifying…" : "Confirm delivery"}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

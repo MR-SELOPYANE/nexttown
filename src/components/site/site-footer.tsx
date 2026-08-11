@@ -34,43 +34,55 @@ export function SiteFooter() {
     <footer className="bg-background pt-20 pb-10 px-6 border-t border-white/5 mt-auto">
       <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-10 mb-16">
         <div className="col-span-2">
-          <Link
-            to="/"
-            className="text-brand-light font-semibold tracking-tight text-xl mb-5 block"
-          >
+          <Link to="/" className="text-brand-light font-semibold tracking-tight text-xl mb-5 block">
             HITCH<span className="text-foreground">SA</span>
           </Link>
           <p className="text-muted-foreground text-sm max-w-[38ch] leading-relaxed">
-            Building the digital nervous system for South African logistics and
-            transport. Headquartered in Sandton, serving the nation.
+            South Africa&apos;s unified mobility marketplace — rides, parcels, freight return-loads,
+            empty airline seats and school transport. Moving in one direction.
           </p>
+          <div className="flex gap-3 mt-5">
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest border border-white/10 rounded-full px-3 py-1">
+              POPIA
+            </span>
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest border border-white/10 rounded-full px-3 py-1">
+              PCI-DSS
+            </span>
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest border border-white/10 rounded-full px-3 py-1">
+              SAPS-verified
+            </span>
+          </div>
         </div>
         <FooterCol
           title="Marketplace"
           links={[
-            { label: "Features", to: "/features" },
-            { label: "Pricing", to: "/pricing" },
-            { label: "For Drivers", to: "/register" },
-            { label: "For Business", to: "/contact" },
+            { label: "Ride now", to: "/ride" },
+            { label: "Rides", to: "/rides" },
+            { label: "Parcels", to: "/parcels" },
+            { label: "Freight", to: "/freight" },
+            { label: "Flights", to: "/flights" },
+            { label: "School", to: "/school" },
           ]}
         />
         <FooterCol
           title="Company"
           links={[
             { label: "About", to: "/about" },
+            { label: "Features", to: "/features" },
+            { label: "Pricing", to: "/pricing" },
             { label: "Careers", to: "/careers" },
-            { label: "Contact", to: "/contact" },
-            { label: "FAQ", to: "/faq" },
           ]}
         />
         <FooterCol
-          title="Support"
+          title="Support & Legal"
           links={[
             { label: "Help Center", to: "/support" },
-            { label: "Contact Us", to: "/contact" },
-            { label: "Privacy", href: "#" },
-            { label: "POPIA", href: "#" },
-            { label: "Terms", href: "#" },
+            { label: "FAQ", to: "/faq" },
+            { label: "Contact", to: "/contact" },
+            { label: "Privacy", to: "/legal/privacy" },
+            { label: "Terms", to: "/legal/terms" },
+            { label: "Cookies", to: "/legal/cookies" },
+            { label: "POPIA", to: "/legal/popia" },
           ]}
         />
       </div>
@@ -79,9 +91,15 @@ export function SiteFooter() {
           © {new Date().getFullYear()} Hitch SA Mobility (Pty) Ltd. All rights reserved.
         </p>
         <div className="flex gap-5 text-xs text-muted-foreground">
-          <a href="#" className="hover:text-foreground">Twitter</a>
-          <a href="#" className="hover:text-foreground">LinkedIn</a>
-          <a href="#" className="hover:text-foreground">Instagram</a>
+          <a href="#" className="hover:text-foreground">
+            Twitter
+          </a>
+          <a href="#" className="hover:text-foreground">
+            LinkedIn
+          </a>
+          <a href="#" className="hover:text-foreground">
+            Instagram
+          </a>
         </div>
       </div>
     </footer>
