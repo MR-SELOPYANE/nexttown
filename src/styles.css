@@ -44,6 +44,36 @@
 :root {
   --radius: 0.75rem;
 
+  /* HITCH SA — Daylight control tower (default) */
+  --background: oklch(0.985 0.003 260);
+  --foreground: oklch(0.18 0.01 260);
+  --surface: oklch(1 0 0);
+  --surface-2: oklch(0.96 0.005 260);
+
+  --brand: oklch(0.55 0.14 158);
+  --brand-light: oklch(0.62 0.15 158);
+  --brand-glow: oklch(0.72 0.16 158 / 0.28);
+
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface);
+  --popover-foreground: var(--foreground);
+  --primary: var(--brand);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: var(--surface-2);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--surface-2);
+  --muted-foreground: oklch(0.45 0.01 260);
+  --accent: var(--surface-2);
+  --accent-foreground: var(--foreground);
+  --destructive: oklch(0.6 0.22 27);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0 0 0 / 0.09);
+  --input: oklch(0 0 0 / 0.14);
+  --ring: var(--brand);
+}
+
+.dark {
   /* HITCH SA — Nocturnal control tower */
   --background: oklch(0.13 0.01 260);      /* zinc-950 */
   --foreground: oklch(0.97 0.005 260);
@@ -66,44 +96,9 @@
   --muted-foreground: oklch(0.68 0.01 260);
   --accent: var(--surface-2);
   --accent-foreground: var(--foreground);
-  --destructive: oklch(0.6 0.22 27);
-  --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(1 0 0 / 0.08);
   --input: oklch(1 0 0 / 0.12);
   --ring: var(--brand-light);
-}
-
-.dark {
-  --background: oklch(0.13 0.01 260);
-  --foreground: oklch(0.97 0.005 260);
-}
-
-.light {
-  /* HITCH SA — Daylight control tower */
-  --background: oklch(0.985 0.003 260);
-  --foreground: oklch(0.18 0.01 260);
-  --surface: oklch(1 0 0);
-  --surface-2: oklch(0.96 0.005 260);
-
-  --brand: oklch(0.55 0.14 158);
-  --brand-light: oklch(0.62 0.15 158);
-  --brand-glow: oklch(0.72 0.16 158 / 0.28);
-
-  --card: var(--surface);
-  --card-foreground: var(--foreground);
-  --popover: var(--surface);
-  --popover-foreground: var(--foreground);
-  --primary: var(--brand);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: var(--surface-2);
-  --secondary-foreground: var(--foreground);
-  --muted: var(--surface-2);
-  --muted-foreground: oklch(0.45 0.01 260);
-  --accent: var(--surface-2);
-  --accent-foreground: var(--foreground);
-  --border: oklch(0 0 0 / 0.09);
-  --input: oklch(0 0 0 / 0.14);
-  --ring: var(--brand);
 }
 
 @utility glass-card {
