@@ -15,17 +15,14 @@ export function loadGoogleMaps(): Promise<typeof google.maps> {
       resolve(google.maps);
       return;
     }
-    const key = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY;
+    const key = import.meta.env.VITE_GOOGLE_MAPS_KEY;
     if (!key) {
       reject(new Error("Google Maps key missing"));
       return;
     }
-    const channel = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_TRACKING_ID ?? "";
     w[CALLBACK] = () => resolve(google.maps);
     const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&callback=${CALLBACK}${
-      channel ? `&channel=${channel}` : ""
-    }`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&callback=${CALLBACK}`;
     script.async = true;
     script.onerror = () => reject(new Error("Google Maps failed to load"));
     document.head.appendChild(script);
@@ -40,4 +37,3 @@ export function loadGoogleMaps(): Promise<typeof google.maps> {
  */
 export const mapColorScheme = (theme: "dark" | "light") =>
   (theme === "dark" ? "DARK" : "LIGHT") as unknown as google.maps.ColorScheme;
-

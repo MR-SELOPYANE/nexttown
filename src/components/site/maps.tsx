@@ -41,7 +41,6 @@ function LiveMapInner({ from, to, progress, height = 320, labels }: LiveMapProps
           disableDefaultUI: true,
           zoomControl: true,
           colorScheme: mapColorScheme(theme),
-
         });
         mapRef.current = map;
 
@@ -91,8 +90,7 @@ function LiveMapInner({ from, to, progress, height = 320, labels }: LiveMapProps
             fillOpacity: 1,
             strokeColor: "#10b981",
             strokeWeight: 3,
-            rotation:
-              (Math.atan2(to.lng - from.lng, to.lat - from.lat) * 180) / Math.PI,
+            rotation: (Math.atan2(to.lng - from.lng, to.lat - from.lat) * 180) / Math.PI,
           },
         });
 
