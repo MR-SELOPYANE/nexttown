@@ -1,0 +1,252 @@
+/**
+
+- SMART PICKUP LOCATION SYSTEM — INTEGRATION GUIDE
+- ============================================================================
+-
+- This document shows how to integrate the SMART PICKUP LOCATION recommendation
+- system into your booking/ride flow component.
+-
+- KEY COMPONENTS:
+- ─────────────────────────────────────────────────────────────────────────
+-
+- 1.  PickupRecommendationCard (UI component)
+- File: src/components/site/pickup-recommendation-card.tsx
+- Shows recommendations and lets passengers accept or keep their choice.
+-
+- 2.  usePickupRecommendation (React hook)
+- File: src/lib/hooks/use-pickup-recommendation.ts
+- Fetches recommendations and manages recommendation state.
+-
+- 3.  Dispatch server functions
+- File: src/lib/dispatch/pickup-zone-functions.ts
+- Backend: getPickupRecommendationFn, logRecommendationFeedbackFn, etc.
+-
+- 4.  Admin panel
+- File: src/components/site/pickup-zones-admin-panel.tsx
+- Allows operators to manage pickup zones (create, edit, delete).
+-
+- 5.  Database schema
+- File: supabase/migrations/20260101000004_pickup_zones.sql
+- Stores pickup zones and recommendation analytics.
+-
+-
+- QUICK START — BOOKING FLOW INTEGRATION
+- ─────────────────────────────────────────────────────────────────────────
+-
+- In your booking/ride flow component (e.g., RideNowFlow):
+-
+- STEP 1: Import the components and hooks
+-
+- import { PickupRecommendationCard } from "@/components/site/pickup-recommendation-card";
+- import { usePickupRecommendation } from "@/lib/hooks/use-pickup-recommendation";
+- import type { RankedPickupZone } from "@/lib/pickup/types";
+-
+- STEP 2: Track the passenger's chosen pickup location
+-
+- // Already done in ride-now-flow.tsx:
+- const [geocodedFrom, setGeocodedFrom] = useState<LatLng | null>(null);
+- // geocodedFrom = the passenger's chosen pickup GPS point
+-
+- STEP 3: Fetch recommendations when the pickup location changes
+-
+- // Hook returns recommendation + loading state
+- const { recommendation, isLoading } = usePickupRecommendation(
+-     geocodedFrom,
+-     { region: "gauteng" } // optional: filter to region
+- );
+-
+- STEP 4: Display the recommendation card
+-
+- <PickupRecommendationCard
+-     location={geocodedFrom}
+-     locationLabel="Your GPS location"
+-     onAccept={(zone) => {
+-       // Passenger accepted the recommendation
+-       // Update geocodedFrom to the zone's entrance:
+-       setGeocodedFrom(zone.zone.entrance);
+-       setPickup(zone.zone.name); // show name instead of GPS
+-     }}
+-     onReject={(location) => {
+-       // Passenger rejected (keep their original point)
+-       // Nothing to do; geocodedFrom already set
+-     }}
+-     onDismiss={() => {
+-       // Passenger dismissed the card
+-     }}
+- />
+-
+- STEP 5: Optional — Log feedback for analytics (done automatically in the card)
+-
+- The card automatically logs whether the user accepted/rejected recommendations.
+- This data is stored in `public.pickup_recommendations_log` for analytics.
+-
+-
+- ADMIN PANEL SETUP
+- ─────────────────────────────────────────────────────────────────────────
+-
+- Add the admin panel to your admin route (e.g., /admin):
+-
+- import { PickupZonesAdminPanel } from "@/components/site/pickup-zones-admin-panel";
+-
+- export default function AdminPage() {
+-     return (
+-       <div>
+-         <PickupZonesAdminPanel />
+-       </div>
+-     );
+- }
+-
+- Features:
+- - Create new pickup zones
+- - Edit existing zones
+- - Toggle active/inactive
+- - Filter by region
+- - Full CRUD interface
+-
+-
+- DATABASE SETUP
+- ─────────────────────────────────────────────────────────────────────────
+-
+- Run the migration to create the pickup_zones table:
+-
+- supabase migration up
+-
+- This creates:
+- - pickup_zones table (stores zone definitions)
+- - pickup_recommendations_log table (tracks recommendation acceptance)
+- - RLS policies for security
+- - Indexes for performance
+- - Seed data for major South African locations
+-
+-
+- DATA FLOW
+- ─────────────────────────────────────────────────────────────────────────
+-
+- 1.  Passenger sets pickup location on map
+- ↓
+- 2.  Component calls usePickupRecommendation(geocodedFrom)
+- ↓
+- 3.  Hook calls getPickupRecommendationFn (RPC to server)
+- ↓
+- 4.  Server fetches active zones from pickup_zones table
+- ↓
+- 5.  Server runs pure recommendPickup() logic to score zones
+- ↓
+- 6.  Server returns ranked recommendations to client
+- ↓
+- 7.  PickupRecommendationCard displays best recommendation
+- ↓
+- 8a. Passenger accepts: card calls onAccept(zone)
+- ↓
+- Component updates geocodedFrom to zone.entrance
+- Card auto-logs feedback (accepted = true)
+-
+- 8b. Passenger rejects: card calls onReject()
+- ↓
+- Component keeps original geocodedFrom
+- Card auto-logs feedback (accepted = false)
+-
+-
+- ADDING NEW SOUTH AFRICAN LOCATIONS
+- ─────────────────────────────────────────────────────────────────────────
+-
+- Operators can add new pickup zones via the admin panel:
+-
+- 1.  Navigate to /admin (or your admin panel URL)
+- 2.  Click "New Zone"
+- 3.  Fill in:
+- - Zone ID (unique slug, e.g. "tut-main-gate")
+- - Zone Name (human readable, e.g. "TUT South Campus Main Gate")
+- - Type (gate, campus, airport, mall, etc.)
+- - Region (Gauteng, KZN, Western Cape, etc.)
+- - Center coordinates (center of the area, e.g. campus centroid)
+- - Entrance coordinates (exact loading point for drivers)
+- - Radius (how far passengers roam before dismissing the zone)
+- - Priority (higher = recommended first)
+- - Description (e.g. "South gate entrance, 24h security")
+- 4.  Click "Save Zone"
+-
+- Zone is now live and will be recommended to passengers in that area.
+-
+-
+- CUSTOMIZATION
+- ─────────────────────────────────────────────────────────────────────────
+-
+- The recommendation scoring is fully configurable:
+-
+- File: src/lib/pickup/recommend.ts
+-
+- - captureRadiusKm (8 km) : How far around passenger's point we search
+- - entranceToleranceKm : If already at entrance, don't suggest
+- - minRecommendedScore : Minimum quality score to suggest a zone
+- - TYPE_BONUS : Scoring weights per zone type
+- - scorePickupZone() : Custom scoring logic
+-
+- Example: If you want to prioritize airport pickups more:
+-
+- const TYPE_BONUS = {
+-     ...TYPE_BONUS,
+-     airport: 20, // was 14, now 20
+- };
+-
+-
+- TESTING
+- ─────────────────────────────────────────────────────────────────────────
+-
+- Unit tests are in: src/lib/pickup/**tests**/
+-
+- Run tests:
+-
+- npm run test
+-
+- Test suite covers:
+- - Scoring logic
+- - Recommendation ranking
+- - Edge cases (already at entrance, no nearby zones, etc.)
+- - Seed catalogue (TUT, Univen, airports, malls, etc.)
+-
+-
+- ANALYTICS & MONITORING
+- ─────────────────────────────────────────────────────────────────────────
+-
+- Track recommendation effectiveness:
+-
+- SELECT
+-     recommended_zone_id,
+-     COUNT(*) as total,
+-     SUM(CASE WHEN accepted = true THEN 1 ELSE 0 END) as accepted_count,
+-     ROUND(100.0 * SUM(CASE WHEN accepted = true THEN 1 ELSE 0 END) / COUNT(*), 1) as acceptance_rate
+- FROM public.pickup_recommendations_log
+- WHERE created_at > now() - interval '7 days'
+- GROUP BY recommended_zone_id
+- ORDER BY total DESC;
+-
+- This tells you:
+- - Which zones are most frequently recommended
+- - How often passengers accept recommendations
+- - Which zones need adjustment (low acceptance = too intrusive)
+-
+-
+- PERFORMANCE NOTES
+- ─────────────────────────────────────────────────────────────────────────
+-
+- - Recommendation fetching is cached: 5-minute TTL
+- - Zone data is RLS-filtered at database level
+- - Scoring is pure/synchronous (O(n) where n = active zones)
+- - Typical recommendation latency: <50ms (pure logic) + network
+- - No impact on booking completion time (non-blocking)
+-
+-
+- SECURITY & PRIVACY
+- ─────────────────────────────────────────────────────────────────────────
+-
+- - Only active zones are visible to public (RLS policy)
+- - Admin-only write access (upsert/delete requires admin role)
+- - Recommendation feedback logs user_id (auth.uid())
+- - No passenger GPS stored anywhere except transient recommendation call
+- - All zone coordinates are public (geographic data, no privacy concern)
+-
+- ============================================================================
+  */
+
+export type PickupIntegrationDocs = void;

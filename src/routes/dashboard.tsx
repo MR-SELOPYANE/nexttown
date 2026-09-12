@@ -1,6 +1,16 @@
 import { createFileRoute, Link, Navigate, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { ArrowRight, Car, MapPin, Package, ShieldCheck, Star, Truck, Wallet, X } from "lucide-react";
+import {
+  ArrowRight,
+  Car,
+  MapPin,
+  Package,
+  ShieldCheck,
+  Star,
+  Truck,
+  Wallet,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
 import { PageShell, PageHeader } from "@/components/site/page-shell";
 import { RequireAuth } from "@/components/site/require-auth";
@@ -25,10 +35,10 @@ export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
   head: () => ({
     meta: [
-      { title: "Dashboard — HITCH SA" },
+      { title: "Dashboard — Next Town" },
       {
         name: "description",
-        content: "Your personal travel hub: bookings, wallet and verification across HITCH SA.",
+        content: "Your personal travel hub: bookings, wallet and verification across Next Town.",
       },
       { name: "robots", content: "noindex" },
     ],
@@ -171,7 +181,12 @@ function DashboardInner() {
             />
           ) : (
             bookings.map((b) => (
-              <BookingRow key={b.id} booking={b} onAdvance={advance.mutate} onCancel={cancel.mutate} />
+              <BookingRow
+                key={b.id}
+                booking={b}
+                onAdvance={advance.mutate}
+                onCancel={cancel.mutate}
+              />
             ))
           )}
         </div>

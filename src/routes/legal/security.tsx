@@ -5,10 +5,10 @@ export const Route = createFileRoute("/legal/security")({
   component: SecurityPage,
   head: () => ({
     meta: [
-      { title: "Security — HITCH SA" },
+      { title: "Security — Next Town" },
       {
         name: "description",
-        content: "How HITCH SA protects your identity, payments and trip data.",
+        content: "How Next Town protects your identity, payments and trip data.",
       },
       { name: "robots", content: "noindex" },
     ],
@@ -22,7 +22,7 @@ function SecurityPage() {
       <LegalBody>
         <h2 className="text-lg font-semibold">Last updated: 1 August 2026</h2>
         <p>
-          Security is the foundation of trust on HITCH SA. Every ride, parcel, freight load, flight
+          Security is the foundation of trust on Next Town. Every ride, parcel, freight load, flight
           seat and school run is backed by identity verification, encrypted data and escrowed
           payments.
         </p>
@@ -69,15 +69,15 @@ function SecurityPage() {
         <h3 className="font-semibold">6. Reporting a vulnerability</h3>
         <p>
           Found a security issue? Please report it privately to{" "}
-          <span className="font-mono">security@hitch.sa</span> — we acknowledge valid reports, fix
-          them promptly and thank responsible researchers.
+          <span className="font-mono">security@nexttown.co.za</span> — we acknowledge valid reports,
+          fix them promptly and thank responsible researchers.
         </p>
 
         <h3 className="font-semibold">7. Compliance</h3>
         <p>
-          HITCH SA operates in line with POPIA, FICA-aligned verification practices and applicable
+          Next Town operates in line with POPIA, FICA-aligned verification practices and applicable
           transport regulations in South Africa. Our Information Officer can be reached at{" "}
-          <span className="font-mono">privacy@hitch.sa</span>.
+          <span className="font-mono">privacy@nexttown.co.za</span>.
         </p>
       </LegalBody>
     </PageShell>

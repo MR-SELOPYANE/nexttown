@@ -1,4 +1,4 @@
-const PREFIX = "hitch-sa:";
+const PREFIX = "next-town:";
 
 export function storageKey(...parts: string[]): string {
   return [PREFIX, ...parts].join(":");

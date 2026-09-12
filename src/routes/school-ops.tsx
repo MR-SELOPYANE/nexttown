@@ -8,13 +8,13 @@ export const Route = createFileRoute("/school-ops")({
   component: SchoolConsolePage,
   head: () => ({
     meta: [
-      { title: "School console — HITCH SA" },
+      { title: "School console — Next Town" },
       {
         name: "description",
         content:
           "Go online, accept school route requests, move learners with live parent tracking and build term revenue.",
       },
-      { property: "og:title", content: "School console — HITCH SA" },
+      { property: "og:title", content: "School console — Next Town" },
       {
         property: "og:description",
         content: "Bolt-style school transport console: routes, learners, parent tracking, revenue.",

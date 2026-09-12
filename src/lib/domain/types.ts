@@ -1,5 +1,6 @@
-export type Role = "traveler" | "driver" | "trucker" | "airline" | "school" | "business" | "admin";
+import type { FareBreakdown, FareQuote } from "../pricing/types";
 
+export type Role = "traveler" | "driver" | "trucker" | "airline" | "school" | "business" | "admin";
 export type MarketType = "ride" | "parcel" | "freight" | "flight" | "school";
 
 export type VerificationStatus = "unverified" | "pending" | "verified" | "rejected";
@@ -90,11 +91,18 @@ export type Booking = {
   from: string;
   to: string;
   price: number;
+  /** Signed, expiring quote the price was charged against (dynamic pricing). */
+  fareQuote?: FareQuote;
+  /** Human-readable breakdown captured at booking time. */
+  fareBreakdown?: FareBreakdown;
   quantity: number;
   status: BookingStatus;
   payment: PaymentState;
   paidFromWallet: boolean;
   createdAt: number;
+  pickupLocation?: { lat: number; lng: number };
+  dropoffLocation?: { lat: number; lng: number };
+  completedAt?: number;
   note?: string;
   rating?: number;
   review?: BookingReview;
@@ -210,12 +218,7 @@ export type FavouriteDestination = {
   createdAt: number;
 };
 
-export type CommuteDays =
-  | "weekdays"
-  | "all-week"
-  | "weekends"
-  | "mon-wed-fri"
-  | "tue-thu";
+export type CommuteDays = "weekdays" | "all-week" | "weekends" | "mon-wed-fri" | "tue-thu";
 
 /** BRS §17 — a recurring commuter plan with cost sharing and a subscription. */
 export type CommutePlan = {

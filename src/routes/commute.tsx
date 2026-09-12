@@ -6,7 +6,7 @@ export const Route = createFileRoute("/commute")({
   component: CommutePage,
   head: () => ({
     meta: [
-      { title: "Commute — HITCH SA" },
+      { title: "Commute — Next Town" },
       {
         name: "description",
         content: "Recurring commute plans, carpool cost sharing and monthly commuter passes.",

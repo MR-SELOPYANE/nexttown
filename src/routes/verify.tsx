@@ -21,8 +21,8 @@ export const Route = createFileRoute("/verify")({
   component: VerifyPage,
   head: () => ({
     meta: [
-      { title: "Verify your identity — HITCH SA" },
-      { name: "description", content: "Complete the HITCH SA identity verification steps." },
+      { title: "Verify your identity — Next Town" },
+      { name: "description", content: "Complete the Next Town identity verification steps." },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -97,7 +97,7 @@ function VerifyPage() {
             </div>
             <h1 className="text-2xl font-semibold tracking-tight mb-2">Verify your identity</h1>
             <p className="text-sm text-muted-foreground">
-              Every HITCH SA account clears these checks before it can travel. Most complete in
+              Every Next Town account clears these checks before it can travel. Most complete in
               under 5 minutes.
             </p>
           </div>

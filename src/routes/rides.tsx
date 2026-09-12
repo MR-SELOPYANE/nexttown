@@ -1,7 +1,7 @@
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
-import { Car, CalendarClock, Zap } from "lucide-react";
-import { PageShell, PageHeader } from "@/components/site/page-shell";
+import { CalendarClock, Zap } from "lucide-react";
+import { PageShell } from "@/components/site/page-shell";
 import { MarketplaceView, type MarketConfig } from "@/components/site/marketplace-view";
 import { RideNowFlow } from "@/components/site/ride-now-flow";
 import { RequireAuth } from "@/components/site/require-auth";
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/rides")({
   component: RidesPage,
   head: () => ({
     meta: [
-      { title: "Rides — HITCH SA" },
+      { title: "Rides — Next Town" },
       {
         name: "description",
         content:
@@ -55,54 +55,78 @@ const MODES: { id: Mode; icon: typeof Zap; label: string; hint: string }[] = [
   { id: "plan", icon: CalendarClock, label: "Plan ahead", hint: "Book a scheduled ride" },
 ];
 
+function ModeSwitch({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => void }) {
+  return (
+    <div
+      role="tablist"
+      aria-label="Ride timing"
+      className="flex items-center gap-1 p-1 rounded-full bg-foreground/5 ring-1 ring-black/10 w-max"
+    >
+      {MODES.map((m) => {
+        const Icon = m.icon;
+        const active = mode === m.id;
+        return (
+          <button
+            key={m.id}
+            role="tab"
+            aria-selected={active}
+            onClick={() => onChange(m.id)}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+              active
+                ? "bg-brand text-white shadow-md shadow-brand/25"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Icon className="size-3.5" />
+            {m.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function RidesPage() {
   const search = useSearch({ from: "/rides" });
   const [mode, setMode] = useState<Mode>(search.from || search.to ? "plan" : "now");
 
   return (
     <PageShell>
-      <PageHeader
-        eyebrow="Rides"
-        title="Now or later — ride your way."
-        subtitle="Ride now for instant matching with a verified driver, or plan ahead and book a scheduled ride at a fixed rate."
-      />
-      <div className="max-w-7xl mx-auto px-6 pt-8">
-        <div
-          role="tablist"
-          aria-label="Ride timing"
-          className="grid grid-cols-2 gap-1.5 p-1.5 rounded-2xl glass-card ring-1 ring-black/20 max-w-md mx-auto"
-        >
-          {MODES.map((m) => {
-            const Icon = m.icon;
-            const active = mode === m.id;
-            return (
-              <button
-                key={m.id}
-                role="tab"
-                aria-selected={active}
-                onClick={() => setMode(m.id)}
-                className={`flex flex-col items-center gap-0.5 px-4 py-3 rounded-xl text-sm transition-colors ${
-                  active
-                    ? "bg-brand/15 ring-1 ring-brand/40 text-foreground"
-                    : "hover:bg-white/5 text-muted-foreground"
-                }`}
-              >
-                <span className="inline-flex items-center gap-1.5 font-semibold">
-                  <Icon className="size-4 text-brand-light" />
-                  {m.label}
-                </span>
-                <span className="text-[11px] font-normal">{m.hint}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
       {mode === "now" ? (
         <RequireAuth>
-          <RideNowFlow />
+          <div className="relative h-[calc(100dvh-4rem)]">
+            <RideNowFlow className="h-full" tab={<ModeSwitch mode={mode} onChange={setMode} />} />
+          </div>
         </RequireAuth>
       ) : (
-        <MarketplaceView config={CONFIG} />
+        <>
+          <section className="relative px-6 pt-10 pb-6 border-b border-white/5 overflow-hidden">
+            <div
+              aria-hidden
+              className="absolute inset-0 -z-10 opacity-60"
+              style={{
+                background:
+                  "radial-gradient(60% 60% at 50% 0%, color-mix(in oklab, var(--brand) 18%, transparent) 0%, transparent 70%)",
+              }}
+            />
+            <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <div className="text-brand-light text-xs font-bold uppercase tracking-widest mb-1">
+                  Plan ahead
+                </div>
+                <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
+                  Book a scheduled ride
+                </h1>
+                <p className="text-sm text-muted-foreground mt-1 max-w-[52ch]">
+                  Fixed-rate rides on the community marketplace — pick a listing that suits your
+                  route, or offer a ride yourself.
+                </p>
+              </div>
+              <ModeSwitch mode={mode} onChange={setMode} />
+            </div>
+          </section>
+          <MarketplaceView config={CONFIG} />
+        </>
       )}
     </PageShell>
   );

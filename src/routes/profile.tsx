@@ -16,13 +16,13 @@ import { Switch } from "@/components/ui/switch";
 export const Route = createFileRoute("/profile")({
   head: () => ({
     meta: [
-      { title: "Profile & verification — HITCH SA" },
+      { title: "Profile & verification — Next Town" },
       {
         name: "description",
         content:
-          "Manage your HITCH SA identity: FICA-aligned KYC verification, driver documents, emergency contacts and notification preferences.",
+          "Manage your Next Town identity: FICA-aligned KYC verification, driver documents, emergency contacts and notification preferences.",
       },
-      { property: "og:title", content: "Profile & verification — HITCH SA" },
+      { property: "og:title", content: "Profile & verification — Next Town" },
       {
         property: "og:description",
         content: "Complete KYC, upload operator documents and control your safety settings.",
@@ -68,7 +68,7 @@ function ProfileInner() {
       <PageHeader
         eyebrow="Account"
         title={`${user.firstName}'s profile`}
-        subtitle="Identity verification, documents and safety preferences — the trust layer behind every HITCH SA match."
+        subtitle="Identity verification, documents and safety preferences — the trust layer behind every Next Town match."
       />
       <section className="px-6 py-14 max-w-5xl mx-auto grid lg:grid-cols-[1fr_320px] gap-6">
         <div className="space-y-6">

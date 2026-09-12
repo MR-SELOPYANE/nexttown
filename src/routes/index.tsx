@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
   component: Landing,
   head: () => ({
     meta: [
-      { title: "HITCH SA — Moving in one direction." },
+      { title: "Next Town — Moving in one direction." },
       {
         name: "description",
         content:
@@ -82,7 +82,7 @@ const VERTICALS: Vertical[] = [
   {
     key: "flights",
     label: "Flights",
-    title: "Sky Hitch — empty seats.",
+    title: "Next Town Flights — empty seats.",
     copy: "Airlines and charter operators list unsold seats close to departure. Travellers unlock domestic routes at charter-grade prices.",
     bullets: ["Domestic + regional charter", "Boarding QR + check-in", "Full refund protection"],
     image: ridesImg,
@@ -152,25 +152,25 @@ function Hero({
       <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
         <div
           className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/10 border border-brand/20 text-brand-light text-xs font-semibold mb-8"
-          style={{ animation: "hitch-fade-up 0.6s ease-out both" }}
+          style={{ animation: "nt-fade-up 0.6s ease-out both" }}
         >
           <span
             className="size-1.5 rounded-full bg-brand-light"
-            style={{ animation: "hitch-pulse-dot 1.8s ease-in-out infinite" }}
+            style={{ animation: "nt-pulse-dot 1.8s ease-in-out infinite" }}
           />
           NOW SERVING 9 PROVINCES
         </div>
 
         <h1
           className="text-5xl md:text-7xl font-semibold tracking-tight leading-[1.05] text-balance max-w-[18ch] mb-6"
-          style={{ animation: "hitch-fade-up 0.7s ease-out 0.05s both" }}
+          style={{ animation: "nt-fade-up 0.7s ease-out 0.05s both" }}
         >
           Moving in one direction.
         </h1>
 
         <p
           className="text-lg text-muted-foreground max-w-[56ch] text-pretty mb-10"
-          style={{ animation: "hitch-fade-up 0.7s ease-out 0.15s both" }}
+          style={{ animation: "nt-fade-up 0.7s ease-out 0.15s both" }}
         >
           The unified mobility infrastructure for South Africa. One platform for commuters,
           couriers, heavy-haulage, aviation and school transport.
@@ -178,7 +178,7 @@ function Hero({
 
         <div
           className="flex flex-col sm:flex-row gap-3 mb-16"
-          style={{ animation: "hitch-fade-up 0.7s ease-out 0.25s both" }}
+          style={{ animation: "nt-fade-up 0.7s ease-out 0.25s both" }}
         >
           <Link
             to="/register"
@@ -198,7 +198,7 @@ function Hero({
         {/* Vertical switcher */}
         <div
           className="w-full max-w-5xl glass-card rounded-2xl overflow-hidden ring-1 ring-black/20 shadow-2xl shadow-black/40"
-          style={{ animation: "hitch-fade-up 0.8s ease-out 0.35s both" }}
+          style={{ animation: "nt-fade-up 0.8s ease-out 0.35s both" }}
         >
           <div className="grid grid-cols-5 border-b border-white/5" role="tablist">
             {VERTICALS.map((v) => {
@@ -227,7 +227,7 @@ function Hero({
           <div
             key={current.key}
             className="p-6 md:p-8 flex flex-col md:flex-row gap-8 items-center"
-            style={{ animation: "hitch-fade-up 0.4s ease-out both" }}
+            style={{ animation: "nt-fade-up 0.4s ease-out both" }}
           >
             <div className="flex-1 text-left">
               <h3 className="text-2xl font-medium mb-3 tracking-tight">{current.title}</h3>
@@ -315,7 +315,7 @@ function BentoVerticals() {
             portrait
           />
           <BentoCard
-            eyebrow="Sky Hitch"
+            eyebrow="Next Town Flights"
             title="Empty airline seats"
             copy="Last-minute domestic and charter seats surfaced the moment they open up."
             icon={Plane}
@@ -366,7 +366,7 @@ function BusinessSegment() {
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
         <div>
           <div className="text-brand-light text-[10px] font-bold uppercase tracking-widest mb-3">
-            HITCH SA for Business
+            Next Town for Business
           </div>
           <h2 className="text-3xl md:text-4xl font-medium mb-4 tracking-tight text-balance">
             Corporate mobility with one invoice.
@@ -421,7 +421,7 @@ function BusinessSegment() {
             ))}
           </div>
           <p className="text-xs text-muted-foreground mt-6">
-            Operators on HITCH SA settle 88% of gross within 48 hours of trip completion.
+            Operators on Next Town settle 88% of gross within 48 hours of trip completion.
           </p>
         </div>
       </div>
@@ -458,7 +458,7 @@ function Testimonials() {
             Moving real people, real cargo.
           </h2>
           <p className="text-muted-foreground text-pretty">
-            From commuters to fleet managers — hear it from the people who hitch every day.
+            From commuters to fleet managers — hear it from the people who move every day.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -538,7 +538,7 @@ function TrustSection() {
     {
       icon: Wallet,
       title: "Escrowed payments",
-      copy: "Funds are held until the hitch is completed. Transparent pricing, no cash risk.",
+      copy: "Funds are held until the trip is completed. Transparent pricing, no cash risk.",
     },
     {
       icon: Radio,
@@ -570,7 +570,7 @@ function TrustSection() {
             Institutional trust. Silicon-Valley speed.
           </h2>
           <p className="text-muted-foreground text-pretty">
-            HITCH SA was engineered against the same standards that regulate our banks — because
+            Next Town was engineered against the same standards that regulate our banks — because
             moving people, cargo and children deserves nothing less.
           </p>
         </div>

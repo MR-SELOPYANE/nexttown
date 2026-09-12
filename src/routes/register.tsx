@@ -41,8 +41,8 @@ export const Route = createFileRoute("/register")({
   component: RegisterPage,
   head: () => ({
     meta: [
-      { title: "Register — HITCH SA" },
-      { name: "description", content: "Create your HITCH SA account." },
+      { title: "Register — Next Town" },
+      { name: "description", content: "Create your Next Town account." },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -134,12 +134,12 @@ function RegisterPage() {
         <GuestOnly>
           <div
             className="w-full max-w-2xl glass-card rounded-2xl p-8 ring-1 ring-black/20"
-            style={{ animation: "hitch-fade-up 0.5s ease-out both" }}
+            style={{ animation: "nt-fade-up 0.5s ease-out both" }}
           >
             <div className="mb-8 text-center">
               <h1 className="text-2xl font-semibold tracking-tight mb-2">Create your account</h1>
               <p className="text-sm text-muted-foreground">
-                One identity for every HITCH vertical — verified, secure, ready to move.
+                One identity for every vertical — verified, secure, ready to move.
               </p>
             </div>
 
@@ -291,7 +291,7 @@ function RegisterPage() {
                       id="email"
                       type="email"
                       autoComplete="email"
-                      placeholder="you@hitch.sa"
+                      placeholder="you@nexttown.co.za"
                       invalid={!!errors.email}
                       {...register("email")}
                     />

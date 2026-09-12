@@ -1,4 +1,4 @@
-import js from "@eslint/js";
+﻿import js from "@eslint/js";
 import eslintPluginPrettier from "eslint-plugin-prettier/recommended";
 import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
@@ -32,8 +32,17 @@ export default tseslint.config(
           ],
         },
       ],
-      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
+      "react-refresh/only-export-components": "off",
       "@typescript-eslint/no-unused-vars": "off",
+    },
+  },
+  {
+    // Server runtime (dispatch service layer) runs in node, not the browser.
+    // These are import-protection-guarded (`**/server/**`) and only reachable
+    // through the server functions in src/lib/dispatch/dispatch-server.ts.
+    files: ["src/lib/dispatch/server/**/*.ts"],
+    languageOptions: {
+      globals: globals.node,
     },
   },
   eslintPluginPrettier,

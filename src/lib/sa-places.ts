@@ -1,6 +1,6 @@
 export type LatLng = { lat: number; lng: number };
 
-/** Approximate coordinates for common HITCH SA pickup / drop-off points. */
+/** Approximate coordinates for common Next Town pickup / drop-off points. */
 export const SA_PLACES: Record<string, LatLng> = {
   johannesburg: { lat: -26.2041, lng: 28.0473 },
   jhb: { lat: -26.2041, lng: 28.0473 },
@@ -51,32 +51,96 @@ export function lookupPlace(raw: string): LatLng | null {
   return hit ? SA_PLACES[hit] : null;
 }
 
-/** Parse titles like "Sandton → OR Tambo" or "Durban - Johannesburg". */
-export function parseRoute(title: string): { from: LatLng; to: LatLng; labels: [string, string] } {
+/** Parse titles like "Sandton → Rosebank → OR Tambo" or "Durban - Johannesburg". */
+export function parseRoute(title: string): {
+  from: LatLng;
+  to: LatLng;
+  stops: LatLng[];
+  labels: string[];
+} {
   const parts = title.split(/→|->|–|—| to /i).map((p) => p.trim());
-  const fromLabel = parts[0] ?? "Johannesburg";
-  const toLabel = parts[1] ?? "Pretoria";
+  const labels = parts.length > 0 ? parts : ["Johannesburg", "Pretoria"];
+  const fromLabel = labels[0] ?? "Johannesburg";
+  const toLabel = labels[labels.length - 1] ?? "Pretoria";
+
+  // Intermediate stops (excluding first and last)
+  const stops: LatLng[] = [];
+  for (let i = 1; i < labels.length - 1; i++) {
+    const coords = lookupPlace(labels[i]);
+    if (coords) stops.push(coords);
+  }
+
   return {
     from: lookupPlace(fromLabel) ?? FALLBACK,
     to: lookupPlace(toLabel) ?? SA_PLACES.pretoria,
-    labels: [fromLabel, toLabel],
+    stops,
+    labels,
   };
 }
 
+/** Linear interpolation between two points (fallback when no road polyline). */
 export function interpolate(a: LatLng, b: LatLng, t: number): LatLng {
   return { lat: a.lat + (b.lat - a.lat) * t, lng: a.lng + (b.lng - a.lng) * t };
 }
 
+/**
+ * Interpolate position along a polyline (array of LatLng points).
+ * `t` is 0–1 representing progress along the full path.
+ */
+export function interpolateAlongPolyline(points: LatLng[], t: number): LatLng {
+  if (points.length === 0) return FALLBACK;
+  if (points.length === 1) return points[0];
+  if (t <= 0) return points[0];
+  if (t >= 1) return points[points.length - 1];
+
+  // Calculate total distance
+  let totalDist = 0;
+  const segDists: number[] = [];
+  for (let i = 1; i < points.length; i++) {
+    const d = haversine(points[i - 1], points[i]);
+    segDists.push(d);
+    totalDist += d;
+  }
+
+  if (totalDist === 0) return points[0];
+
+  const targetDist = t * totalDist;
+  let accum = 0;
+
+  for (let i = 0; i < segDists.length; i++) {
+    if (accum + segDists[i] >= targetDist) {
+      const segT = (targetDist - accum) / segDists[i];
+      return interpolate(points[i], points[i + 1], segT);
+    }
+    accum += segDists[i];
+  }
+
+  return points[points.length - 1];
+}
+
+/** Calculate bearing between two points in degrees (0–360, clockwise from north). */
+export function bearing(a: LatLng, b: LatLng): number {
+  const dLng = ((b.lng - a.lng) * Math.PI) / 180;
+  const lat1 = (a.lat * Math.PI) / 180;
+  const lat2 = (b.lat * Math.PI) / 180;
+  const y = Math.sin(dLng) * Math.cos(lat2);
+  const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+  return ((Math.atan2(y, x) * 180) / Math.PI + 360) % 360;
+}
+
 /** Great-circle distance in km between two points. */
 export function distanceKm(a: LatLng, b: LatLng): number {
+  return Math.round(haversine(a, b) * 10) / 10;
+}
+
+export function haversine(a: LatLng, b: LatLng): number {
   const R = 6371;
   const dLat = ((b.lat - a.lat) * Math.PI) / 180;
   const dLng = ((b.lng - a.lng) * Math.PI) / 180;
   const la1 = (a.lat * Math.PI) / 180;
   const la2 = (b.lat * Math.PI) / 180;
-  const h =
-    Math.sin(dLat / 2) ** 2 + Math.cos(la1) * Math.cos(la2) * Math.sin(dLng / 2) ** 2;
-  return Math.round(2 * R * Math.asin(Math.sqrt(h)) * 10) / 10;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(la1) * Math.cos(la2) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
 }
 
 /** Nearest known place to a GPS coordinate within radiusKm, or null if none. */

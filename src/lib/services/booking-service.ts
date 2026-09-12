@@ -2,6 +2,10 @@ import type { Booking, BookingReview, BookingStatus, PaymentState } from "../dom
 import { latency, loadJson, makeRef, saveJson, storageKey, uid } from "./core";
 import { MarketService } from "./market-service";
 import { WalletService } from "./wallet-service";
+import { authorizeBookingPriceFn } from "../pricing/pricing-server";
+import { PricingRuleStore } from "../pricing/rule-store";
+import type { FareQuote } from "../pricing/types";
+import { SafetyService } from "../safety";
 
 const key = (userId: string) => storageKey("data", userId, "bookings");
 
@@ -24,20 +28,75 @@ export type BookingInput = {
   quantity: number;
   paidFromWallet: boolean;
   parcelDetails?: string;
+  /** Signed dynamic-pricing quote. When present the backend re-authorises it. */
+  fareQuote?: FareQuote;
+  pickupLocation?: { lat: number; lng: number };
+  dropoffLocation?: { lat: number; lng: number };
 };
 
-const podCode = (): string =>
-  String(Math.floor(100000 + Math.random() * 899999));
+const podCode = (): string => String(Math.floor(100000 + Math.random() * 899999));
+
+/**
+ * Server-authoritative price resolution. The client's `price` and `fareQuote`
+ * are NEVER trusted blindly: we ask the server to re-derive the fare and only
+ * proceed when the quote is valid and unexpired. If the server is unavailable
+ * we fall back to the local rule store (offline/demo), still verifying the
+ * quote's signature and expiry.
+ */
+async function resolveAuthoritativePrice(
+  input: BookingInput,
+): Promise<{ price: number; fareQuote?: FareQuote; fareBreakdown?: FareQuote["breakdown"] }> {
+  const quote = input.fareQuote;
+
+  if (!quote) {
+    // No dynamic quote supplied — keep the client price (marketplace listings,
+    // operator-set fares) but record it as-is.
+    return { price: input.price };
+  }
+
+  // Try the authoritative server first.
+  const serverResult = await authorizeBookingPriceFn({ data: { quote: quote } });
+  if (serverResult && serverResult.ok) {
+    return {
+      price: serverResult.price,
+      fareQuote: serverResult.quote,
+      fareBreakdown: serverResult.quote.breakdown,
+    };
+  }
+  if (serverResult && !serverResult.ok && !serverResult.degraded) {
+    // Server is authoritative and refused — surface the reason to the caller.
+    const err = new Error(serverResult.message || "Price could not be authorised.");
+    (err as Error & { code?: string }).code = serverResult.code;
+    throw err;
+  }
+
+  // Degraded / no server: local fallback, still verifying signature + expiry.
+  if (PricingRuleStore.verify(quote, Date.now())) {
+    return { price: quote.breakdown.total, fareQuote: quote, fareBreakdown: quote.breakdown };
+  }
+  const fresh = PricingRuleStore.quote(quote.tripInput, Date.now());
+  const err = new Error("This quote is no longer valid — refresh for the current price.");
+  (err as Error & { code?: string }).code = "expired";
+  throw err;
+}
 
 /** Finalises a booking: release escrow to the operator and record the payout. */
 async function complete(booking: Booking): Promise<Booking> {
   const released = { ...booking, payment: "paid" as PaymentState };
   await WalletService.release(booking.userId, booking.ref, booking.price);
-  await WalletService.creditPayout(
-    booking.userId,
-    `${booking.type} · ${booking.title}`,
-    booking.price,
-  );
+  const listing = await MarketService.get(booking.listingId);
+  const tierId = booking.fareQuote?.tripInput.tierId;
+  const feeRate = tierId
+    ? PricingRuleStore.get().tiers.find((t) => t.id === tierId)?.serviceFeeRate
+    : undefined;
+  if (listing && listing.ownerId !== booking.userId) {
+    await WalletService.creditPayout(
+      listing.ownerId,
+      `${booking.type} · ${booking.title}`,
+      booking.price,
+      feeRate,
+    );
+  }
   return released;
 }
 
@@ -50,7 +109,8 @@ export const BookingService = {
   async create(userId: string, input: BookingInput): Promise<Booking> {
     await latency(600);
     const ref = makeRef();
-    const hold = await WalletService.hold(userId, input.price, ref, input.paidFromWallet);
+    const resolved = await resolveAuthoritativePrice(input);
+    const hold = await WalletService.hold(userId, resolved.price, ref, input.paidFromWallet);
     const booking: Booking = {
       id: uid(),
       ref,
@@ -61,16 +121,23 @@ export const BookingService = {
       route: input.route,
       from: input.from,
       to: input.to,
-      price: input.price,
+      price: resolved.price,
+      fareQuote: resolved.fareQuote,
+      fareBreakdown: resolved.fareBreakdown,
       quantity: input.quantity,
       status: hold.status === "pending" ? "requested" : "confirmed",
       payment: "held",
       paidFromWallet: input.paidFromWallet,
+      pickupLocation: input.pickupLocation,
+      dropoffLocation: input.dropoffLocation,
       podCode: input.type === "parcel" ? podCode() : undefined,
       parcelDetails: input.parcelDetails,
       createdAt: Date.now(),
     };
     writeBookings(userId, [booking, ...readBookings(userId)]);
+    SafetyService.recordRideEvent(userId, booking.id, "RIDE_REQUESTED", {
+      rideType: booking.type,
+    });
     await MarketService.consumeSeats(input.listingId, input.quantity);
     return booking;
   },
@@ -95,8 +162,21 @@ export const BookingService = {
 
     let updated: Booking = { ...booking, status: target };
 
+    const eventByStatus: Partial<
+      Record<BookingStatus, Parameters<typeof SafetyService.recordRideEvent>[2]>
+    > = {
+      confirmed: "DRIVER_ASSIGNED",
+      in_transit: "TRIP_STARTED",
+      completed: "TRIP_COMPLETED",
+    };
+    const eventType = eventByStatus[target];
+    if (eventType) SafetyService.recordRideEvent(userId, booking.id, eventType);
+    if (target === "in_transit") {
+      SafetyService.recordRideEvent(userId, booking.id, "PICKUP_CONFIRMED");
+    }
+
     if (target === "completed") {
-      updated = await complete(updated);
+      updated = await complete({ ...updated, completedAt: Date.now() });
     }
 
     writeBookings(
@@ -117,7 +197,8 @@ export const BookingService = {
     if (String(booking.podCode ?? "").trim() !== code.trim()) {
       throw new Error("That OTP is incorrect. Check the code shown against the QR.");
     }
-    const updated = await complete({ ...booking, status: "completed" });
+    SafetyService.recordRideEvent(userId, booking.id, "TRIP_COMPLETED");
+    const updated = await complete({ ...booking, status: "completed", completedAt: Date.now() });
     writeBookings(
       userId,
       all.map((b) => (b.id === id ? updated : b)),
@@ -132,9 +213,7 @@ export const BookingService = {
     const avg = Math.round(
       (review.safety + review.punctuality + review.cleanliness + review.communication) / 4,
     );
-    const updated = all.map((b) =>
-      b.id === id ? { ...b, review, rating: avg } : b,
-    );
+    const updated = all.map((b) => (b.id === id ? { ...b, review, rating: avg } : b));
     writeBookings(userId, updated);
     return updated.find((b) => b.id === id) as Booking;
   },
@@ -152,8 +231,13 @@ export const BookingService = {
       status: "cancelled",
       payment: booking.payment === "held" ? "refunded" : booking.payment,
     };
+    SafetyService.recordRideEvent(userId, booking.id, "RIDE_CANCELLED");
     if (booking.payment === "held") {
-      await WalletService.refund(userId, booking.ref, booking.price);
+      if (booking.paidFromWallet) {
+        await WalletService.refund(userId, booking.ref, booking.price);
+      } else {
+        await WalletService.cancelHold(userId, booking.ref);
+      }
     }
     await MarketService.releaseSeats(booking.listingId, booking.quantity);
     writeBookings(

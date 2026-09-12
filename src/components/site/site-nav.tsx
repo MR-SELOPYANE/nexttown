@@ -30,7 +30,7 @@ export function SiteNav() {
       <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-4">
         <div className="flex items-center gap-6 min-w-0">
           <Link to="/" className="text-brand-light font-semibold tracking-tight text-xl shrink-0">
-            HITCH<span className="text-foreground">SA</span>
+            NEXTTOWN
           </Link>
           <div className="hidden lg:flex items-center gap-5 text-sm font-medium text-muted-foreground">
             <div
@@ -140,7 +140,7 @@ export function SiteNav() {
               <SheetHeader className="border-b border-white/10 px-5 py-4">
                 <SheetTitle className="text-left">
                   <span className="text-brand-light font-semibold tracking-tight text-xl">
-                    HITCH<span className="text-foreground">SA</span>
+                    NEXTTOWN
                   </span>
                 </SheetTitle>
               </SheetHeader>

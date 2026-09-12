@@ -13,16 +13,16 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/notifications")({
   head: () => ({
     meta: [
-      { title: "Notifications — HITCH SA" },
+      { title: "Notifications — Next Town" },
       {
         name: "description",
         content:
-          "Every HITCH SA trip milestone, payment receipt and safety alert in one activity feed.",
+          "Every Next Town trip milestone, payment receipt and safety alert in one activity feed.",
       },
-      { property: "og:title", content: "Notifications — HITCH SA" },
+      { property: "og:title", content: "Notifications — Next Town" },
       {
         property: "og:description",
-        content: "Trip, payment and safety alerts across the HITCH SA mobility marketplace.",
+        content: "Trip, payment and safety alerts across the Next Town mobility marketplace.",
       },
     ],
   }),

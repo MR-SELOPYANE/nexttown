@@ -68,6 +68,18 @@ function makeKyc(idType: "sa-id" | "passport"): Kyc {
   };
 }
 
+function currentActor(): User | null {
+  const session = loadJson<SessionUser | null>(SESSION_KEY, null);
+  if (!session) return null;
+  return readUsers().find((user) => user.id === session.id) ?? null;
+}
+
+function assertAdmin(): User {
+  const actor = currentActor();
+  if (!actor || actor.role !== "admin") throw new Error("Administrator access required.");
+  return actor;
+}
+
 export type RegisterInput = {
   firstName: string;
   lastName: string;
@@ -90,7 +102,7 @@ export const AuthService = {
     if (users.some((u) => u.phone === input.phone.trim())) {
       throw new Error("This mobile number is already registered.");
     }
-    const passwordHash = await sha256(`hitch-sa::${input.email.toLowerCase()}::${input.password}`);
+    const passwordHash = await sha256(`next-town::${input.email.toLowerCase()}::${input.password}`);
     const user: User = {
       id: uid(),
       firstName: input.firstName.trim(),
@@ -126,7 +138,7 @@ export const AuthService = {
     if (user.status === "suspended") {
       throw new Error("This account has been suspended. Contact support for assistance.");
     }
-    const hash = await sha256(`hitch-sa::${normalized}::${password}`);
+    const hash = await sha256(`next-town::${normalized}::${password}`);
     if (hash !== user.passwordHash) {
       throw new Error("Incorrect password. Please try again.");
     }
@@ -169,13 +181,25 @@ export const AuthService = {
     const updated = [...users];
     updated[idx] = {
       ...updated[idx],
-      passwordHash: await sha256(`hitch-sa::${normalized}::${newPassword}`),
+      passwordHash: await sha256(`next-town::${normalized}::${newPassword}`),
     };
     writeUsers(updated);
   },
 
   async updateUser(updates: Partial<User> & { id: string }): Promise<SessionUser> {
     await latency(250);
+    const actor = currentActor();
+    if (!actor || (actor.id !== updates.id && actor.role !== "admin")) {
+      throw new Error("You can only update your own account.");
+    }
+    if (
+      actor.role !== "admin" &&
+      ["role", "status", "passwordHash", "createdAt", "twoFactorEnabled"].some(
+        (field) => field in updates,
+      )
+    ) {
+      throw new Error("Protected account fields cannot be changed here.");
+    }
     const users = readUsers();
     const idx = users.findIndex((u) => u.id === updates.id);
     if (idx === -1) throw new Error("Account not found.");
@@ -224,12 +248,12 @@ export const AuthService = {
     return publicUser(merged);
   },
 
-  /** Seeded accounts so reviewers can sign in instantly. Runs on first boot. */  async ensureDemoAccounts(): Promise<void> {
+  /** Seeded accounts so reviewers can sign in instantly. Runs on first boot. */ async ensureDemoAccounts(): Promise<void> {
     const users = readUsers();
     if (users.length > 0) return;
     const created: User[] = await Promise.all(
       DEMO_ACCOUNTS.map(async (d) => {
-        const passwordHash = await sha256(`hitch-sa::${d.email}::${d.password}`);
+        const passwordHash = await sha256(`next-town::${d.email}::${d.password}`);
         return {
           id: uid(),
           firstName: d.firstName,
@@ -266,6 +290,7 @@ export const AuthService = {
     decision: "approved" | "rejected",
   ): Promise<SessionUser> {
     await latency(400);
+    assertAdmin();
     const users = readUsers();
     const idx = users.findIndex((u) => u.id === userId);
     if (idx === -1) throw new Error("Account not found.");
@@ -282,11 +307,9 @@ export const AuthService = {
   },
 
   /** Admin suspension or reactivation of a member (BRS §23). */
-  async setUserStatus(
-    userId: string,
-    status: "active" | "suspended",
-  ): Promise<SessionUser> {
+  async setUserStatus(userId: string, status: "active" | "suspended"): Promise<SessionUser> {
     await latency(350);
+    assertAdmin();
     const users = readUsers();
     const idx = users.findIndex((u) => u.id === userId);
     if (idx === -1) throw new Error("Account not found.");

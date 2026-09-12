@@ -6,10 +6,10 @@ export const Route = createFileRoute("/legal/privacy")({
   component: PrivacyPage,
   head: () => ({
     meta: [
-      { title: "Privacy Policy — HITCH SA" },
+      { title: "Privacy Policy — Next Town" },
       {
         name: "description",
-        content: "How HITCH SA collects, uses and protects your personal information.",
+        content: "How Next Town collects, uses and protects your personal information.",
       },
       { name: "robots", content: "noindex" },
     ],
@@ -23,10 +23,9 @@ function PrivacyPage() {
       <LegalBody>
         <h2 className="text-lg font-semibold">Last updated: 1 August 2026</h2>
         <p>
-          Hitch SA Mobility (Pty) Ltd ("HITCH SA", "we", "us") is committed to protecting your
-          personal information in line with the Protection of Personal Information Act 4 of 2013
-          (POPIA). This policy explains what we collect, why we collect it, and the choices you
-          have.
+          Next Town NT (Pty) Ltd ("Next Town", "we", "us") is committed to protecting your personal
+          information in line with the Protection of Personal Information Act 4 of 2013 (POPIA).
+          This policy explains what we collect, why we collect it, and the choices you have.
         </p>
 
         <h3 className="font-semibold">1. Information we collect</h3>
@@ -70,7 +69,7 @@ function PrivacyPage() {
         <p>
           Under POPIA you have the right to access, correct, object to, or request deletion of your
           personal information. To exercise any of these rights, contact our Information Officer at{" "}
-          <span className="font-mono">privacy@hitch.sa</span>.
+          <span className="font-mono">privacy@nexttown.co.za</span>.
         </p>
 
         <h3 className="font-semibold">7. Changes to this policy</h3>

@@ -16,6 +16,8 @@ import { PageShell, PageHeader } from "@/components/site/page-shell";
 import { RequireRole } from "@/components/site/require-auth";
 import { KycStatusPill, StatCard, StatusPill } from "@/components/site/status";
 import { EmptyState, ErrorState, ListSkeleton } from "@/components/site/states";
+import { PricingAdminPanel } from "@/components/site/pricing-admin-panel";
+import { PickupZonesAdminPanel } from "@/components/site/pickup-zones-admin-panel";
 import {
   useAdminUsers,
   useAllTickets,
@@ -33,7 +35,7 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
   head: () => ({
     meta: [
-      { title: "Admin console — HITCH SA" },
+      { title: "Admin console — Next Town" },
       {
         name: "description",
         content: "Platform administration: members, driver & vehicle approvals, and support.",
@@ -43,7 +45,7 @@ export const Route = createFileRoute("/admin")({
   }),
 });
 
-type Tab = "users" | "verification" | "tickets";
+type Tab = "users" | "verification" | "tickets" | "pricing" | "pickup-zones";
 
 function AdminPage() {
   return (
@@ -107,6 +109,8 @@ function AdminInner() {
               ["users", "Members"],
               ["verification", `Approvals${pendingDocs ? ` · ${pendingDocs}` : ""}`],
               ["tickets", `Support inbox${open ? ` · ${open}` : ""}`],
+              ["pricing", "Pricing"],
+              ["pickup-zones", "Pickup zones"],
             ] as const
           ).map(([key, label]) => (
             <button
@@ -134,9 +138,7 @@ function AdminInner() {
             ) : users.length === 0 ? (
               <EmptyState title="No members yet" description="Accounts will appear here." />
             ) : (
-              users.map((u) => (
-                <MemberRow key={u.id} user={u} />
-              ))
+              users.map((u) => <MemberRow key={u.id} user={u} />)
             )}
           </div>
         )}
@@ -152,9 +154,7 @@ function AdminInner() {
             ) : (
               users
                 .filter((u) => u.role !== "traveler")
-                .map((u) => (
-                  <ApprovalRow key={u.id} user={u} />
-                ))
+                .map((u) => <ApprovalRow key={u.id} user={u} />)
             )}
           </div>
         )}
@@ -183,9 +183,14 @@ function AdminInner() {
           </div>
         )}
 
+        {tab === "pricing" && <PricingAdminPanel />}
+
+        {tab === "pickup-zones" && <PickupZonesAdminPanel />}
+
         {suspended > 0 && (
           <p className="text-xs text-muted-foreground">
-            {suspended} suspended account{suspended > 1 ? "s" : ""} — reactivate from the Members tab.
+            {suspended} suspended account{suspended > 1 ? "s" : ""} — reactivate from the Members
+            tab.
           </p>
         )}
       </section>
@@ -231,7 +236,9 @@ function MemberRow({ user }: { user: SessionUser }) {
         disabled={setStatus.isPending}
         onClick={() => {
           setStatus.mutate(suspended ? "active" : "suspended");
-          toast.success(suspended ? `${user.firstName} reactivated` : `${user.firstName} suspended`);
+          toast.success(
+            suspended ? `${user.firstName} reactivated` : `${user.firstName} suspended`,
+          );
         }}
       >
         {suspended ? <UserCheck className="size-4" /> : <Ban className="size-4" />}

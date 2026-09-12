@@ -6,7 +6,7 @@ export const Route = createFileRoute("/parcels")({
   component: ParcelsPage,
   head: () => ({
     meta: [
-      { title: "Parcels — HITCH SA" },
+      { title: "Parcels — Next Town" },
       {
         name: "description",
         content:

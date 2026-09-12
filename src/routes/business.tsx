@@ -8,13 +8,13 @@ export const Route = createFileRoute("/business")({
   component: BusinessConsolePage,
   head: () => ({
     meta: [
-      { title: "Business console — HITCH SA" },
+      { title: "Business console — Next Town" },
       {
         name: "description",
         content:
           "Go online, accept staff and cargo movement requests, dispatch your fleet and manage volume logistics.",
       },
-      { property: "og:title", content: "Business console — HITCH SA" },
+      { property: "og:title", content: "Business console — Next Town" },
       {
         property: "og:description",
         content: "Bolt-style business console: dispatch, cargo movement, fleet, volume pricing.",

@@ -48,7 +48,7 @@ export const CommuteService = {
     );
   },
 
-  /** BRS §19 — a monthly commute pass charged to the HITCH wallet. */
+  /** BRS §19 — a monthly commute pass charged to the NT wallet. */
   async subscribe(userId: string, id: string): Promise<CommutePlan> {
     await latency(600);
     const all = loadJson<CommutePlan[]>(key(userId), []);

@@ -78,7 +78,7 @@ type State = {
   sosLog: { id: string; at: number; where: string }[];
 };
 
-const KEY = "hitch-demo-state";
+const KEY = "nt-demo-state";
 
 const SEED_POSTINGS: Posting[] = [
   {
@@ -263,11 +263,14 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       createdAt: Date.now(),
     };
     setState((s) =>
-      pushNote({ ...s, bookings: [booking, ...s.bookings] }, {
-        title: `Booking ${booking.ref} confirmed`,
-        body: `${booking.title} · ${booking.route}`,
-        kind: "trip",
-      }),
+      pushNote(
+        { ...s, bookings: [booking, ...s.bookings] },
+        {
+          title: `Booking ${booking.ref} confirmed`,
+          body: `${booking.title} · ${booking.route}`,
+          kind: "trip",
+        },
+      ),
     );
     return booking;
   }, []);
@@ -311,11 +314,14 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   const addPosting: Ctx["addPosting"] = useCallback((p) => {
     const posting: Posting = { ...p, id: uid(), status: "live", createdAt: Date.now() };
     setState((s) =>
-      pushNote({ ...s, postings: [posting, ...s.postings] }, {
-        title: "Listing published",
-        body: `${posting.title} is live on the marketplace.`,
-        kind: "system",
-      }),
+      pushNote(
+        { ...s, postings: [posting, ...s.postings] },
+        {
+          title: "Listing published",
+          body: `${posting.title} is live on the marketplace.`,
+          kind: "system",
+        },
+      ),
     );
     return posting;
   }, []);
@@ -344,7 +350,11 @@ export function DemoProvider({ children }: { children: ReactNode }) {
             ...s.txns,
           ],
         },
-        { title: "Wallet top-up successful", body: `R ${amount} added via ${method}.`, kind: "payment" },
+        {
+          title: "Wallet top-up successful",
+          body: `R ${amount} added via ${method}.`,
+          kind: "payment",
+        },
       ),
     );
   }, []);
@@ -400,10 +410,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     [],
   );
 
-  const clearNotifications = useCallback(
-    () => setState((s) => ({ ...s, notifications: [] })),
-    [],
-  );
+  const clearNotifications = useCallback(() => setState((s) => ({ ...s, notifications: [] })), []);
 
   const submitKyc = useCallback((k: Partial<Kyc>) => {
     setState((s) =>
@@ -417,7 +424,9 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       ),
     );
     setTimeout(() => {
-      setState((s) => (s.kyc.status === "pending" ? { ...s, kyc: { ...s.kyc, status: "verified" } } : s));
+      setState((s) =>
+        s.kyc.status === "pending" ? { ...s, kyc: { ...s.kyc, status: "verified" } } : s,
+      );
     }, 4000);
   }, []);
 
@@ -442,7 +451,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         { ...s, sosLog: [{ id: uid(), at: Date.now(), where }, ...s.sosLog] },
         {
           title: "SOS dispatched",
-          body: `Live location shared with the HITCH SA safety desk and your emergency contact.`,
+          body: `Live location shared with the Next Town safety desk and your emergency contact.`,
           kind: "safety",
         },
       ),
@@ -509,5 +518,4 @@ export function useDemo() {
   return ctx;
 }
 
-export const zar = (n: number) =>
-  `R ${n.toLocaleString("en-ZA", { maximumFractionDigits: 0 })}`;
+export const zar = (n: number) => `R ${n.toLocaleString("en-ZA", { maximumFractionDigits: 0 })}`;

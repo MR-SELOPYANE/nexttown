@@ -22,14 +22,14 @@ export const Route = createFileRoute("/support")({
   component: SupportPage,
   head: () => ({
     meta: [
-      { title: "Support — HITCH SA" },
+      { title: "Support — Next Town" },
       {
         name: "description",
         content:
-          "Get help with HITCH SA. Emergency response, wallet issues, driver support and 24/7 live chat.",
+          "Get help with Next Town. Emergency response, wallet issues, driver support and 24/7 live chat.",
       },
-      { property: "og:title", content: "Support — HITCH SA" },
-      { property: "og:description", content: "24/7 support for every HITCH SA user." },
+      { property: "og:title", content: "Support — Next Town" },
+      { property: "og:description", content: "24/7 support for every Next Town user." },
       { property: "og:url", content: "/support" },
     ],
     links: [{ rel: "canonical", href: "/support" }],
@@ -78,17 +78,19 @@ function SupportPage() {
               <LifeBuoy className="size-5 text-brand-light" />
             </div>
             <h3 className="text-base font-semibold mb-1">Emergency line</h3>
-            <p className="text-sm text-muted-foreground">0800 HITCH (24/7)</p>
+            <p className="text-sm text-muted-foreground">0800 NEXTTOWN (24/7)</p>
           </a>
           <a
-            href="mailto:help@hitch.sa"
+            href="mailto:help@nexttown.co.za"
             className="glass-card rounded-2xl p-6 ring-1 ring-black/20 hover:border-brand/30 transition-colors"
           >
             <div className="size-10 rounded-lg bg-brand/10 border border-brand/20 flex items-center justify-center mb-4">
               <MessageSquare className="size-5 text-brand-light" />
             </div>
             <h3 className="text-base font-semibold mb-1">Email help</h3>
-            <p className="text-sm text-muted-foreground">help@hitch.sa · replies in &lt; 1h</p>
+            <p className="text-sm text-muted-foreground">
+              help@nexttown.co.za · replies in &lt; 1h
+            </p>
           </a>
           <Link
             to="/faq"

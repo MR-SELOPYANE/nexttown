@@ -44,7 +44,7 @@
 :root {
   --radius: 0.75rem;
 
-  /* HITCH SA — Daylight control tower (default) */
+  /* Next Town — Daylight control tower (default) */
   --background: oklch(0.985 0.003 260);
   --foreground: oklch(0.18 0.01 260);
   --surface: oklch(1 0 0);
@@ -74,14 +74,14 @@
 }
 
 .dark {
-  /* HITCH SA — Nocturnal control tower */
-  --background: oklch(0.13 0.01 260);      /* zinc-950 */
+  /* Next Town — Nocturnal control tower */
+  --background: oklch(0.13 0.01 260); /* zinc-950 */
   --foreground: oklch(0.97 0.005 260);
-  --surface: oklch(0.18 0.01 260);         /* zinc-900 */
-  --surface-2: oklch(0.22 0.012 260);      /* zinc-800 */
+  --surface: oklch(0.18 0.01 260); /* zinc-900 */
+  --surface-2: oklch(0.22 0.012 260); /* zinc-800 */
 
-  --brand: oklch(0.62 0.14 158);           /* emerald 600 */
-  --brand-light: oklch(0.72 0.16 158);     /* emerald 500 */
+  --brand: oklch(0.62 0.14 158); /* emerald 600 */
+  --brand-light: oklch(0.72 0.16 158); /* emerald 500 */
   --brand-glow: oklch(0.75 0.18 158 / 0.35);
 
   --card: var(--surface);
@@ -108,12 +108,24 @@
 }
 
 /* Theme-aware neutral tints so components authored dark-first read well in light mode too */
-.light .bg-white\/\[0\.02\] { background-color: color-mix(in oklab, var(--foreground) 3%, transparent) !important; }
-.light .bg-white\/\[0\.03\] { background-color: color-mix(in oklab, var(--foreground) 4%, transparent) !important; }
-.light .bg-white\/5 { background-color: color-mix(in oklab, var(--foreground) 5%, transparent) !important; }
-.light .border-white\/5 { border-color: color-mix(in oklab, var(--foreground) 8%, transparent) !important; }
-.light .border-white\/10 { border-color: color-mix(in oklab, var(--foreground) 12%, transparent) !important; }
-.light .ring-black\/20 { --tw-ring-color: color-mix(in oklab, var(--foreground) 8%, transparent) !important; }
+.light .bg-white\/\[0\.02\] {
+  background-color: color-mix(in oklab, var(--foreground) 3%, transparent) !important;
+}
+.light .bg-white\/\[0\.03\] {
+  background-color: color-mix(in oklab, var(--foreground) 4%, transparent) !important;
+}
+.light .bg-white\/5 {
+  background-color: color-mix(in oklab, var(--foreground) 5%, transparent) !important;
+}
+.light .border-white\/5 {
+  border-color: color-mix(in oklab, var(--foreground) 8%, transparent) !important;
+}
+.light .border-white\/10 {
+  border-color: color-mix(in oklab, var(--foreground) 12%, transparent) !important;
+}
+.light .ring-black\/20 {
+  --tw-ring-color: color-mix(in oklab, var(--foreground) 8%, transparent) !important;
+}
 
 @utility text-balance {
   text-wrap: balance;
@@ -123,24 +135,46 @@
   text-wrap: pretty;
 }
 
-@keyframes hitch-pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.85); }
+@keyframes nt-pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
 }
 
-@keyframes hitch-fade-up {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes nt-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@keyframes hitch-drift {
-  0%, 100% { transform: translate3d(0,0,0); }
-  50% { transform: translate3d(0,-10px,0); }
+@keyframes nt-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
-  html { scroll-behavior: smooth; }
+  * {
+    border-color: var(--color-border);
+  }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);

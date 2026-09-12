@@ -8,13 +8,13 @@ export const Route = createFileRoute("/truck")({
   component: TruckConsolePage,
   head: () => ({
     meta: [
-      { title: "Trucker console — HITCH SA" },
+      { title: "Trucker console — Next Town" },
       {
         name: "description",
         content:
-          "Go online, accept return-load freight requests, haul the route and watch your HITCH SA earnings build in real time.",
+          "Go online, accept return-load freight requests, haul the route and watch your Next Town earnings build in real time.",
       },
-      { property: "og:title", content: "Trucker console — HITCH SA" },
+      { property: "og:title", content: "Trucker console — Next Town" },
       {
         property: "og:description",
         content: "Bolt-style trucker console: online toggle, return-load requests, earnings.",

@@ -1,6 +1,19 @@
 import { useState } from "react";
-import { CalendarClock, Loader2, Pause, Play, Plus, Route as RouteIcon, Trash2 } from "lucide-react";
-import { useCreateListing, useMyListings, useRemoveListing, useToggleListing } from "@/lib/hooks/queries";
+import {
+  CalendarClock,
+  Loader2,
+  Pause,
+  Play,
+  Plus,
+  Route as RouteIcon,
+  Trash2,
+} from "lucide-react";
+import {
+  useCreateListing,
+  useMyListings,
+  useRemoveListing,
+  useToggleListing,
+} from "@/lib/hooks/queries";
 import { useAuth } from "@/lib/store/auth-context";
 import { useDemo, zar } from "@/lib/demo-store";
 import type { MarketType } from "@/lib/domain/types";
@@ -38,7 +51,9 @@ export function OperatorListings({
   const [submitting, setSubmitting] = useState(false);
 
   const mine =
-    listings?.filter((l) => !markets || markets.includes(l.type)).sort((a, b) => b.createdAt - a.createdAt) ?? [];
+    listings
+      ?.filter((l) => !markets || markets.includes(l.type))
+      .sort((a, b) => b.createdAt - a.createdAt) ?? [];
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -79,7 +94,9 @@ export function OperatorListings({
   return (
     <div className="glass-card rounded-3xl ring-1 ring-black/20 p-5">
       <div className="flex items-center justify-between mb-1">
-        <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{title}</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          {title}
+        </h2>
         <button
           onClick={() => setOpen((v) => !v)}
           aria-label={postCta}
@@ -97,7 +114,9 @@ export function OperatorListings({
         >
           <div className="grid grid-cols-2 gap-2">
             <label className="block">
-              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">From</span>
+              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                From
+              </span>
               <input
                 name="from"
                 required
@@ -106,7 +125,9 @@ export function OperatorListings({
               />
             </label>
             <label className="block">
-              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">To</span>
+              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                To
+              </span>
               <input
                 name="to"
                 required
@@ -117,7 +138,9 @@ export function OperatorListings({
           </div>
           <div className="grid grid-cols-2 gap-2">
             <label className="block">
-              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">When</span>
+              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                When
+              </span>
               <input
                 name="when"
                 placeholder="Fri 21 Aug"
@@ -125,7 +148,9 @@ export function OperatorListings({
               />
             </label>
             <label className="block">
-              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{capacityLabel}</span>
+              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                {capacityLabel}
+              </span>
               <input
                 name="capacity"
                 placeholder="3 seats"
@@ -134,7 +159,9 @@ export function OperatorListings({
             </label>
           </div>
           <label className="block">
-            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{priceLabel}</span>
+            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+              {priceLabel}
+            </span>
             <input
               name="price"
               type="number"
@@ -150,18 +177,16 @@ export function OperatorListings({
             disabled={submitting}
             className="w-full inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-light text-white text-sm font-semibold py-2.5 rounded-xl ring-1 ring-brand/50 transition-colors disabled:opacity-60"
           >
-            {submitting ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              <Plus className="size-4" />
-            )}
+            {submitting ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
             Publish
           </button>
         </form>
       )}
 
       {mine.length === 0 ? (
-        <p className="text-xs text-muted-foreground">Nothing listed yet. Post capacity to start earning.</p>
+        <p className="text-xs text-muted-foreground">
+          Nothing listed yet. Post capacity to start earning.
+        </p>
       ) : (
         <div className="space-y-2">
           {mine.map((t) => (

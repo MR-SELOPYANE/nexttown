@@ -9,13 +9,7 @@ export function MarketToolbar({ children }: { children: ReactNode }) {
   );
 }
 
-export function MarketField({
-  label,
-  children,
-}: {
-  label: string;
-  children: ReactNode;
-}) {
+export function MarketField({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="block">
       <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">

@@ -46,8 +46,8 @@ export function MarketplaceView({ config }: { config: MarketConfig }) {
   const location = useMyLocation();
 
   useEffect(() => {
-    if (!from && location.state.pickup && location.state.status === "ready") {
-      setFrom(location.state.pickup);
+    if (!from && location.state.place && location.state.status === "ready") {
+      setFrom(location.state.place);
     }
   }, [location.state, from]);
 
@@ -249,7 +249,7 @@ export function ListingCard({
           aria-label="Share this trip"
           title="Share"
           onClick={async () => {
-            const text = `${listing.title} on HITCH SA · ${listing.when} · ${zar(listing.price)} — book on the marketplace`;
+            const text = `${listing.title} on Next Town · ${listing.when} · ${zar(listing.price)} — book on the marketplace`;
             try {
               await navigator.clipboard?.writeText(text);
               toast.success("Trip details copied to clipboard");

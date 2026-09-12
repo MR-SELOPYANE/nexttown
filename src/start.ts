@@ -1,5 +1,9 @@
 import { createStart, createMiddleware } from "@tanstack/react-start";
 
+// Registers the dispatch server functions (RPC endpoints) with the start
+// handler. Client callers import "./lib/dispatch/dispatch-server" directly.
+import "./lib/dispatch/dispatch-server";
+
 import { renderErrorPage } from "./lib/error-page";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {

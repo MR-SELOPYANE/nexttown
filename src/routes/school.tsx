@@ -6,7 +6,7 @@ export const Route = createFileRoute("/school")({
   component: SchoolPage,
   head: () => ({
     meta: [
-      { title: "School transport — HITCH SA" },
+      { title: "School transport — Next Town" },
       {
         name: "description",
         content:
@@ -44,7 +44,7 @@ function SchoolPage() {
       <PageHeader
         eyebrow="School transport marketplace"
         title="Safer school runs, every single day."
-        subtitle="SAPS-screened operators, live GPS tracking, and real-time parent notifications — vetted by HITCH."
+        subtitle="SAPS-screened operators, live GPS tracking, and real-time parent notifications — vetted by Next Town."
       />
       <MarketplaceView config={CONFIG} />
     </PageShell>

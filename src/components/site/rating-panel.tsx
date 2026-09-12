@@ -115,7 +115,9 @@ export function ReviewSummary({ review }: { review: BookingReview }) {
                 key={n}
                 className={cn(
                   "size-3.5",
-                  (review[c.key] ?? 0) >= n ? "fill-brand text-brand-light" : "text-muted-foreground/40",
+                  (review[c.key] ?? 0) >= n
+                    ? "fill-brand text-brand-light"
+                    : "text-muted-foreground/40",
                 )}
               />
             ))}

@@ -21,16 +21,16 @@ export const Route = createFileRoute("/about")({
   component: AboutPage,
   head: () => ({
     meta: [
-      { title: "About — HITCH SA" },
+      { title: "About — Next Town" },
       {
         name: "description",
         content:
-          "HITCH SA is a cutting-edge digital mobility platform reimagining the classic hitchhiking experience into a safe, secure and tech-savvy transportation ecosystem.",
+          "Next Town is a cutting-edge digital mobility platform reimagining the classic hitchhiking experience into a safe, secure and tech-savvy transportation ecosystem.",
       },
-      { property: "og:title", content: "About — HITCH SA" },
+      { property: "og:title", content: "About — Next Town" },
       {
         property: "og:description",
-        content: "South Africa's unified mobility, hitchhiking and logistics platform.",
+        content: "South Africa's unified mobility and logistics platform.",
       },
       { property: "og:url", content: "/about" },
     ],
@@ -44,7 +44,11 @@ const WHO_WE_CONNECT = [
   { icon: Truck, title: "Truck operators", copy: "Return loads instead of empty return trips." },
   { icon: Package, title: "Parcel senders", copy: "Faster, cheaper delivery for every parcel." },
   { icon: Plane, title: "Airlines", copy: "Sell vacant seats instead of flying empty." },
-  { icon: GraduationCap, title: "Schools & parents", copy: "Dependable transport for school communities." },
+  {
+    icon: GraduationCap,
+    title: "Schools & parents",
+    copy: "Dependable transport for school communities.",
+  },
   { icon: Clock, title: "Daily commuters", copy: "Shared, affordable commuting every day." },
   { icon: Briefcase, title: "Businesses", copy: "Logistics, corporate travel and freight." },
 ];
@@ -128,13 +132,13 @@ function AboutPage() {
       <PageHeader
         eyebrow="About"
         title="Moving in one direction."
-        subtitle="HITCH SA reimagines the classic hitchhiking experience, turning it into a safe, secure and tech-savvy transportation ecosystem that connects people, vehicles, cargo and parcels across South Africa."
+        subtitle="Next Town reimagines the classic hitchhiking experience, turning it into a safe, secure and tech-savvy transportation ecosystem that connects people, vehicles, cargo and parcels across South Africa."
       />
 
       <section className="px-6 py-20">
         <div className="max-w-4xl mx-auto grid gap-10 md:grid-cols-2 text-muted-foreground text-[15px] leading-relaxed">
           <p>
-            HITCH SA is a digital mobility platform built for South Africa — from daily commuters
+            Next Town is a digital mobility platform built for South Africa — from daily commuters
             and travelers looking for budget-friendly transport, to drivers with extra seats to
             fill, truck operators seeking return loads, parcel senders, school communities, and
             airlines with vacant seats.
@@ -156,7 +160,10 @@ function AboutPage() {
             {WHO_WE_CONNECT.map((c) => {
               const Icon = c.icon;
               return (
-                <div key={c.title} className="glass-card rounded-2xl p-6 ring-1 ring-black/20 hover:border-brand/30 transition-colors">
+                <div
+                  key={c.title}
+                  className="glass-card rounded-2xl p-6 ring-1 ring-black/20 hover:border-brand/30 transition-colors"
+                >
                   <div className="size-10 rounded-lg bg-brand/10 border border-brand/20 flex items-center justify-center mb-4">
                     <Icon className="size-5 text-brand-light" />
                   </div>
@@ -175,7 +182,7 @@ function AboutPage() {
             The problem we solve
           </h2>
           <p className="text-muted-foreground mb-10 max-w-[56ch]">
-            South Africa is grappling with a range of transportation issues. HITCH SA was built to
+            South Africa is grappling with a range of transportation issues. Next Town was built to
             close each gap in a fragmented transport economy.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -191,7 +198,10 @@ function AboutPage() {
                   </div>
                   <ul className="space-y-2.5">
                     {p.points.map((point) => (
-                      <li key={point} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                      <li
+                        key={point}
+                        className="flex items-start gap-2.5 text-sm text-muted-foreground"
+                      >
                         <Check className="size-4 text-brand-light mt-0.5 shrink-0" />
                         {point}
                       </li>
@@ -206,7 +216,9 @@ function AboutPage() {
 
       <section className="px-6 pb-24 border-t border-white/5 pt-20">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-medium tracking-tight mb-3">What we're building towards</h2>
+          <h2 className="text-2xl md:text-3xl font-medium tracking-tight mb-3">
+            What we're building towards
+          </h2>
           <p className="text-muted-foreground mb-10 max-w-[56ch]">
             Our goal is to become the largest mobility marketplace in Africa, seamlessly connecting
             people, vehicles, cargo, parcels and transportation services through innovative
@@ -216,7 +228,10 @@ function AboutPage() {
             {OBJECTIVES.map((o) => {
               const Icon = o.icon;
               return (
-                <div key={o.copy} className="glass-card rounded-2xl p-5 ring-1 ring-black/20 hover:border-brand/30 transition-colors">
+                <div
+                  key={o.copy}
+                  className="glass-card rounded-2xl p-5 ring-1 ring-black/20 hover:border-brand/30 transition-colors"
+                >
                   <Icon className="size-5 text-brand-light mb-3" />
                   <p className="text-sm text-foreground/85 leading-relaxed">{o.copy}</p>
                 </div>
@@ -247,7 +262,8 @@ function AboutPage() {
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-medium tracking-tight mb-3">Built to the law</h2>
           <p className="text-muted-foreground mb-10 max-w-[56ch]">
-            HITCH SA is designed for full compliance with South African law and financial regulation.
+            Next Town is designed for full compliance with South African law and financial
+            regulation.
           </p>
           <div className="flex flex-wrap gap-2.5">
             {COMPLIANCE.map((c) => (

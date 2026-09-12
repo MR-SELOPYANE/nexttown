@@ -6,8 +6,8 @@ export const Route = createFileRoute("/legal/cookies")({
   component: CookiesPage,
   head: () => ({
     meta: [
-      { title: "Cookie Policy — HITCH SA" },
-      { name: "description", content: "How HITCH SA uses cookies and similar technologies." },
+      { title: "Cookie Policy — Next Town" },
+      { name: "description", content: "How Next Town uses cookies and similar technologies." },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -20,7 +20,7 @@ function CookiesPage() {
       <LegalBody>
         <h2 className="text-lg font-semibold">Last updated: 1 August 2026</h2>
         <p>
-          This policy explains how HITCH SA uses cookies and similar technologies to keep the
+          This policy explains how Next Town uses cookies and similar technologies to keep the
           platform secure, remember your preferences and measure how the service performs.
         </p>
 
@@ -49,7 +49,7 @@ function CookiesPage() {
         <h3 className="font-semibold">4. Contact</h3>
         <p>
           Questions about this policy can be sent to{" "}
-          <span className="font-mono">privacy@hitch.sa</span>.
+          <span className="font-mono">privacy@nexttown.co.za</span>.
         </p>
       </LegalBody>
     </PageShell>

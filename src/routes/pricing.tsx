@@ -6,13 +6,13 @@ export const Route = createFileRoute("/pricing")({
   component: PricingPage,
   head: () => ({
     meta: [
-      { title: "Pricing — HITCH SA" },
+      { title: "Pricing — Next Town" },
       {
         name: "description",
         content:
-          "Transparent, take-rate pricing for individuals, drivers, operators and businesses on HITCH SA.",
+          "Transparent, take-rate pricing for individuals, drivers, operators and businesses on Next Town.",
       },
-      { property: "og:title", content: "Pricing — HITCH SA" },
+      { property: "og:title", content: "Pricing — Next Town" },
       { property: "og:description", content: "Simple, transparent pricing across every vertical." },
       { property: "og:url", content: "/pricing" },
     ],
@@ -40,7 +40,7 @@ const TIERS = [
     name: "Operator",
     tag: "Drivers, truckers, pilots",
     price: "12%",
-    priceSub: "Take rate on each completed hitch",
+    priceSub: "Take rate on each completed trip",
     features: [
       "Instant payouts to your wallet",
       "Driver-level performance dashboard",
@@ -121,12 +121,10 @@ function PricingPage() {
 
       <section className="px-6 pb-24 border-t border-white/5 pt-16">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl font-medium tracking-tight mb-3">
-            No hidden fees, ever.
-          </h2>
+          <h2 className="text-2xl font-medium tracking-tight mb-3">No hidden fees, ever.</h2>
           <p className="text-muted-foreground">
-            What you see is what you pay. Detailed price breakdowns are shown
-            before every hitch — for every party involved.
+            What you see is what you pay. Detailed price breakdowns are shown before every trip —
+            for every party involved.
           </p>
         </div>
       </section>

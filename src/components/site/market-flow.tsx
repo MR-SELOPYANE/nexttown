@@ -147,9 +147,7 @@ export function MarketplaceView({
                     <div className="text-[10px] font-bold uppercase tracking-widest text-brand-light mb-1">
                       {l.eyebrow}
                     </div>
-                    <h3 className="text-base font-semibold text-foreground truncate">
-                      {l.title}
-                    </h3>
+                    <h3 className="text-base font-semibold text-foreground truncate">{l.title}</h3>
                     <p className="text-xs text-muted-foreground mt-0.5">{l.route}</p>
                   </div>
                   <div className="text-right shrink-0">
@@ -280,9 +278,7 @@ export function MarketplaceView({
               <Check className="size-6" />
             </div>
             <p className="text-sm font-semibold mb-1">Reference {confirmation}</p>
-            <p className="text-xs text-muted-foreground mb-5">
-              Tracked live in your dashboard.
-            </p>
+            <p className="text-xs text-muted-foreground mb-5">Tracked live in your dashboard.</p>
             <a
               href="/dashboard"
               className="inline-flex items-center justify-center bg-brand hover:bg-brand-light text-white text-sm font-medium py-2.5 px-5 rounded-lg ring-1 ring-brand/50 transition-colors"
@@ -315,7 +311,7 @@ function Modal({
         aria-modal="true"
         onClick={(e) => e.stopPropagation()}
         className="w-full max-w-md glass-card rounded-2xl p-6 ring-1 ring-black/30"
-        style={{ animation: "hitch-fade-up 0.25s ease-out both" }}
+        style={{ animation: "nt-fade-up 0.25s ease-out both" }}
       >
         <div className="flex items-center justify-between mb-5">
           <h3 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">

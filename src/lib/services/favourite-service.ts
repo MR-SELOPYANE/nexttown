@@ -11,12 +11,17 @@ export const FavouriteService = {
     );
   },
 
-  async add(userId: string, input: { label: string; from: string; to: string }): Promise<FavouriteDestination> {
+  async add(
+    userId: string,
+    input: { label: string; from: string; to: string },
+  ): Promise<FavouriteDestination> {
     await latency(300);
     const all = loadJson<FavouriteDestination[]>(key(userId), []);
     if (
       all.some(
-        (f) => f.from.toLowerCase() === input.from.toLowerCase() && f.to.toLowerCase() === input.to.toLowerCase(),
+        (f) =>
+          f.from.toLowerCase() === input.from.toLowerCase() &&
+          f.to.toLowerCase() === input.to.toLowerCase(),
       )
     ) {
       throw new Error("This route is already in your favourites.");

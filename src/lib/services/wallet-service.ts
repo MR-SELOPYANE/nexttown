@@ -1,5 +1,6 @@
 import type { PaymentMethod, Txn, TxnKind, TxnStatus, Wallet } from "../domain/types";
 import { latency, loadJson, makeRef, saveJson, storageKey, uid } from "./core";
+import { PricingRuleStore } from "../pricing/rule-store";
 
 const txnsKey = (userId: string) => storageKey("data", userId, "txns");
 const walletKey = (userId: string) => storageKey("data", userId, "wallet");
@@ -106,9 +107,27 @@ export const WalletService = {
     pushTxn(userId, "refund", `Refund · ${ref}`, amount, "wallet", "completed", ref);
   },
 
-  async creditPayout(userId: string, label: string, gross: number): Promise<void> {
+  /** Cancel a card escrow hold without crediting the wallet. */
+  async cancelHold(userId: string, ref: string): Promise<void> {
+    await latency(200);
+    const all = readTxns(userId);
+    writeTxns(
+      userId,
+      all.map((t) => (t.ref === ref ? { ...t, status: "completed" as TxnStatus } : t)),
+    );
+  },
+
+  async creditPayout(
+    userId: string,
+    label: string,
+    gross: number,
+    serviceFeeRate?: number,
+  ): Promise<void> {
     await latency(250);
-    const net = Math.round(gross * 0.88);
+    // Platform commission comes from the configurable pricing rules (defaults
+    // to the first tier's service fee) rather than a hard-coded take rate.
+    const feeRate = serviceFeeRate ?? PricingRuleStore.get().tiers[0]?.serviceFeeRate ?? 0.12;
+    const net = Math.max(0, Math.round(gross * (1 - feeRate)));
     const wallet = readWallet(userId);
     saveJson(walletKey(userId), { ...wallet, balance: wallet.balance + net });
     pushTxn(userId, "payout", `${label} · payout`, net, "wallet", "completed");

@@ -401,7 +401,7 @@ export const DEMO_ACCOUNTS: {
   role: "traveler" | "driver" | "trucker" | "airline" | "school" | "business" | "admin";
 }[] = [
   {
-    email: "traveler@hitch.sa",
+    email: "traveler@nexttown.co.za",
     password: "Hitch#2026",
     firstName: "Thabo",
     lastName: "Nkosi",
@@ -409,7 +409,7 @@ export const DEMO_ACCOUNTS: {
     role: "traveler",
   },
   {
-    email: "driver@hitch.sa",
+    email: "driver@nexttown.co.za",
     password: "Hitch#2026",
     firstName: "Lerato",
     lastName: "Mokoena",
@@ -417,7 +417,7 @@ export const DEMO_ACCOUNTS: {
     role: "driver",
   },
   {
-    email: "trucker@hitch.sa",
+    email: "trucker@nexttown.co.za",
     password: "Hitch#2026",
     firstName: "Sipho",
     lastName: "Dlamini",
@@ -425,7 +425,7 @@ export const DEMO_ACCOUNTS: {
     role: "trucker",
   },
   {
-    email: "airline@hitch.sa",
+    email: "airline@nexttown.co.za",
     password: "Hitch#2026",
     firstName: "Aisha",
     lastName: "Patel",
@@ -433,7 +433,7 @@ export const DEMO_ACCOUNTS: {
     role: "airline",
   },
   {
-    email: "school@hitch.sa",
+    email: "school@nexttown.co.za",
     password: "Hitch#2026",
     firstName: "Naledi",
     lastName: "Khumalo",
@@ -441,7 +441,7 @@ export const DEMO_ACCOUNTS: {
     role: "school",
   },
   {
-    email: "business@hitch.sa",
+    email: "business@nexttown.co.za",
     password: "Hitch#2026",
     firstName: "Pieter",
     lastName: "Botha",
@@ -449,7 +449,7 @@ export const DEMO_ACCOUNTS: {
     role: "business",
   },
   {
-    email: "admin@hitch.sa",
+    email: "admin@nexttown.co.za",
     password: "Hitch#2026",
     firstName: "Gladwin",
     lastName: "Malishe",

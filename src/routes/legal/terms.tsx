@@ -6,10 +6,10 @@ export const Route = createFileRoute("/legal/terms")({
   component: TermsPage,
   head: () => ({
     meta: [
-      { title: "Terms of Service — HITCH SA" },
+      { title: "Terms of Service — Next Town" },
       {
         name: "description",
-        content: "The terms that govern your use of the HITCH SA marketplace.",
+        content: "The terms that govern your use of the Next Town marketplace.",
       },
       { name: "robots", content: "noindex" },
     ],
@@ -23,14 +23,14 @@ function TermsPage() {
       <LegalBody>
         <h2 className="text-lg font-semibold">Last updated: 1 August 2026</h2>
         <p>
-          By registering for or using the HITCH SA marketplace, you agree to these Terms of Service.
-          Please read them carefully. If you do not agree, do not use the platform.
+          By registering for or using the Next Town marketplace, you agree to these Terms of
+          Service. Please read them carefully. If you do not agree, do not use the platform.
         </p>
 
         <h3 className="font-semibold">1. The marketplace</h3>
         <p>
-          HITCH SA connects travellers, senders and operators across five marketplaces: rides,
-          parcels, freight return-loads, empty airline seats and school transport. HITCH SA is a
+          Next Town connects travellers, senders and operators across five marketplaces: rides,
+          parcels, freight return-loads, empty airline seats and school transport. Next Town is a
           technology platform and does not itself provide transport services.
         </p>
 
@@ -63,7 +63,7 @@ function TermsPage() {
 
         <h3 className="font-semibold">6. Limitation of liability</h3>
         <p>
-          To the maximum extent permitted by law, HITCH SA is not liable for indirect or
+          To the maximum extent permitted by law, Next Town is not liable for indirect or
           consequential loss arising from your use of the platform. Nothing in these terms limits
           rights you cannot lawfully waive.
         </p>

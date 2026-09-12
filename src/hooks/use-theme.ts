@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 export type Theme = "dark" | "light";
-const KEY = "hitch-theme";
+const KEY = "nt-theme";
 
 function apply(theme: Theme) {
   const root = document.documentElement;

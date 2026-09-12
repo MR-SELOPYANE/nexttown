@@ -20,8 +20,8 @@ export const Route = createFileRoute("/forgot-password")({
   component: ForgotPasswordPage,
   head: () => ({
     meta: [
-      { title: "Reset password — HITCH SA" },
-      { name: "description", content: "Reset your HITCH SA password." },
+      { title: "Reset password — Next Town" },
+      { name: "description", content: "Reset your Next Town password." },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -78,7 +78,7 @@ function ForgotPasswordPage() {
       <main className="flex-1 flex items-center justify-center px-6 py-16">
         <div
           className="w-full max-w-md glass-card rounded-2xl p-8 ring-1 ring-black/20"
-          style={{ animation: "hitch-fade-up 0.5s ease-out both" }}
+          style={{ animation: "nt-fade-up 0.5s ease-out both" }}
         >
           <Link
             to="/login"
@@ -114,7 +114,7 @@ function ForgotPasswordPage() {
                   <TextInput
                     id="email"
                     type="email"
-                    placeholder="you@hitch.sa"
+                    placeholder="you@nexttown.co.za"
                     invalid={!!emailForm.formState.errors.email}
                     {...emailForm.register("email")}
                   />

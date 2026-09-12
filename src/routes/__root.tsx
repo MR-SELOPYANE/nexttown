@@ -75,16 +75,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "HITCH SA — Moving in one direction." },
+      { title: "Next Town — Moving in one direction." },
       {
         name: "description",
         content:
-          "HITCH SA is South Africa's unified mobility marketplace — rides, parcels, freight return-loads, empty airline seats, and school transport on one platform.",
+          "Next Town is South Africa's unified mobility marketplace — rides, parcels, freight return-loads, empty airline seats, and school transport on one platform.",
       },
-      { name: "author", content: "HITCH SA" },
+      { name: "author", content: "Next Town" },
       { name: "theme-color", content: "#09090b" },
-      { property: "og:site_name", content: "HITCH SA" },
-      { property: "og:title", content: "HITCH SA — Moving in one direction." },
+      { property: "og:site_name", content: "Next Town" },
+      { property: "og:title", content: "Next Town — Moving in one direction." },
       {
         property: "og:description",
         content:
@@ -92,7 +92,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "HITCH SA — Moving in one direction." },
+      { name: "twitter:title", content: "Next Town — Moving in one direction." },
       {
         name: "twitter:description",
         content: "South Africa's unified mobility marketplace.",
@@ -115,7 +115,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
-const THEME_INIT = `(function(){try{var t=localStorage.getItem('hitch-theme')||'light';var r=document.documentElement;r.classList.remove('dark','light');r.classList.add(t);r.style.colorScheme=t;}catch(e){document.documentElement.classList.add('light');}})();`;
+const THEME_INIT = `(function(){try{var t=localStorage.getItem('nt-theme')||'light';var r=document.documentElement;r.classList.remove('dark','light');r.classList.add(t);r.style.colorScheme=t;}catch(e){document.documentElement.classList.add('light');}})();`;
 
 function RootShell({ children }: { children: ReactNode }) {
   return (

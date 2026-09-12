@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Check, CreditCard, Loader2, Package, Share2, ShieldCheck, Star, Wallet, X } from "lucide-react";
+import {
+  Check,
+  CreditCard,
+  Loader2,
+  Package,
+  Share2,
+  ShieldCheck,
+  Star,
+  Wallet,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useAddFavourite, useCreateBooking } from "@/lib/hooks/queries";
@@ -55,7 +65,8 @@ export function BookingModal({ listing, onClose }: { listing: Listing; onClose: 
         price: listing.price,
         quantity: 1,
         paidFromWallet: method === "wallet",
-        parcelDetails: listing.type === "parcel" && parcelDetails.trim() ? parcelDetails.trim() : undefined,
+        parcelDetails:
+          listing.type === "parcel" && parcelDetails.trim() ? parcelDetails.trim() : undefined,
       });
       setDone(booking.ref);
     } catch (e) {
@@ -74,7 +85,7 @@ export function BookingModal({ listing, onClose }: { listing: Listing; onClose: 
   }
 
   async function shareTrip() {
-    const text = `${listing.title} on HITCH SA · ${listing.when} · ${zar(listing.price)} — book on the marketplace`;
+    const text = `${listing.title} on Next Town · ${listing.when} · ${zar(listing.price)} — book on the marketplace`;
     try {
       await navigator.clipboard?.writeText(text);
       toast.success("Trip details copied to clipboard");
@@ -158,7 +169,7 @@ export function BookingModal({ listing, onClose }: { listing: Listing; onClose: 
               <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-400 mb-5">
                 <p className="font-medium mb-1">Verification required</p>
                 <p className="text-xs text-amber-400/80">
-                  HITCH SA verifies every identity before a trip. Complete your SA ID verification
+                  Next Town verifies every identity before a trip. Complete your SA ID verification
                   in your profile to continue.
                 </p>
                 <Link to="/profile" className="mt-2 inline-block text-xs font-semibold underline">
@@ -187,7 +198,8 @@ export function BookingModal({ listing, onClose }: { listing: Listing; onClose: 
             {listing.type === "parcel" && (
               <div className="mb-5">
                 <label className="block text-xs font-medium text-muted-foreground mb-1.5">
-                  Parcel description <span className="text-muted-foreground/60">(so the courier can verify it)</span>
+                  Parcel description{" "}
+                  <span className="text-muted-foreground/60">(so the courier can verify it)</span>
                 </label>
                 <textarea
                   value={parcelDetails}
@@ -197,7 +209,8 @@ export function BookingModal({ listing, onClose }: { listing: Listing; onClose: 
                   className="w-full rounded-lg bg-white/[0.03] border border-white/10 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand/60 resize-none"
                 />
                 <div className="flex items-center gap-2 mt-2 text-[11px] text-muted-foreground">
-                  <Package className="size-3.5" /> Delivery is confirmed with a QR / OTP proof-of-delivery code.
+                  <Package className="size-3.5" /> Delivery is confirmed with a QR / OTP
+                  proof-of-delivery code.
                 </div>
               </div>
             )}
@@ -214,7 +227,7 @@ export function BookingModal({ listing, onClose }: { listing: Listing; onClose: 
               >
                 <Wallet className="size-5 text-brand-light" />
                 <div className="flex-1">
-                  <div className="text-sm font-medium">HITCH Wallet</div>
+                  <div className="text-sm font-medium">Next Town Wallet</div>
                   <div className="text-xs text-muted-foreground">
                     Balance {zar(wallet?.balance ?? 0)}
                   </div>

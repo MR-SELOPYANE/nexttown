@@ -35,7 +35,7 @@ export function SiteFooter() {
       <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-10 mb-16">
         <div className="col-span-2">
           <Link to="/" className="text-brand-light font-semibold tracking-tight text-xl mb-5 block">
-            HITCH<span className="text-foreground">SA</span>
+            NEXTTOWN
           </Link>
           <p className="text-muted-foreground text-sm max-w-[38ch] leading-relaxed">
             South Africa&apos;s unified mobility marketplace — rides, parcels, freight return-loads,
@@ -88,7 +88,7 @@ export function SiteFooter() {
       </div>
       <div className="max-w-7xl mx-auto border-t border-white/5 pt-6 flex flex-col md:flex-row justify-between items-center gap-3">
         <p className="text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Hitch SA Mobility (Pty) Ltd. All rights reserved.
+          © {new Date().getFullYear()} Next Town NT (Pty) Ltd. All rights reserved.
         </p>
         <div className="flex gap-5 text-xs text-muted-foreground">
           <a href="#" className="hover:text-foreground">

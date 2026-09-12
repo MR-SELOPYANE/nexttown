@@ -6,10 +6,10 @@ export const Route = createFileRoute("/legal/popia")({
   component: PopiaPage,
   head: () => ({
     meta: [
-      { title: "POPIA Notice — HITCH SA" },
+      { title: "POPIA Notice — Next Town" },
       {
         name: "description",
-        content: "How HITCH SA complies with the Protection of Personal Information Act, 2013.",
+        content: "How Next Town complies with the Protection of Personal Information Act, 2013.",
       },
       { name: "robots", content: "noindex" },
     ],
@@ -23,15 +23,15 @@ function PopiaPage() {
       <LegalBody>
         <h2 className="text-lg font-semibold">Last updated: 1 August 2026</h2>
         <p>
-          In terms of the Protection of Personal Information Act 4 of 2013 (POPIA), HITCH SA
-          Mobility (Pty) Ltd is the responsible party for the personal information processed through
-          the HITCH SA platform.
+          In terms of the Protection of Personal Information Act 4 of 2013 (POPIA), Next Town NT
+          (Pty) Ltd is the responsible party for the personal information processed through the Next
+          Town platform.
         </p>
 
         <h3 className="font-semibold">1. Our Information Officer</h3>
         <p>
           Our Information Officer oversees POPIA compliance and data subject requests. Contact:{" "}
-          <span className="font-mono">privacy@hitch.sa</span>.
+          <span className="font-mono">privacy@nexttown.co.za</span>.
         </p>
 
         <h3 className="font-semibold">2. What we process and why</h3>

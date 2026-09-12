@@ -8,13 +8,13 @@ export const Route = createFileRoute("/airline")({
   component: AirlineConsolePage,
   head: () => ({
     meta: [
-      { title: "Airline console — HITCH SA" },
+      { title: "Airline console — Next Town" },
       {
         name: "description",
         content:
-          "Go online, accept seat reservation requests on scheduled legs, manage boarding and watch your HITCH SA revenue build.",
+          "Go online, accept seat reservation requests on scheduled legs, manage boarding and watch your Next Town revenue build.",
       },
-      { property: "og:title", content: "Airline console — HITCH SA" },
+      { property: "og:title", content: "Airline console — Next Town" },
       {
         property: "og:description",
         content: "Bolt-style airline console: online toggle, seat requests, boarding, revenue.",

@@ -6,7 +6,7 @@ export const Route = createFileRoute("/flights")({
   component: FlightsPage,
   head: () => ({
     meta: [
-      { title: "Empty seats — HITCH SA" },
+      { title: "Empty seats — Next Town" },
       {
         name: "description",
         content:

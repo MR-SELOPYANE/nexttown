@@ -6,7 +6,7 @@ export const Route = createFileRoute("/freight")({
   component: FreightPage,
   head: () => ({
     meta: [
-      { title: "Freight return-loads — HITCH SA" },
+      { title: "Freight return-loads — Next Town" },
       {
         name: "description",
         content:

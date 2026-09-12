@@ -1,16 +1,17 @@
 import { useCallback, useState } from "react";
-import { nearestPlace } from "@/lib/sa-places";
+import type { LatLng } from "@/lib/sa-places";
 
 export type LocationState =
-  | { status: "idle"; pickup: string | null; error: null }
-  | { status: "locating"; pickup: string | null; error: null }
-  | { status: "ready"; pickup: string; error: null }
-  | { status: "error"; pickup: string | null; error: string };
+  | { status: "idle"; place: string | null; coords: LatLng | null; error: null }
+  | { status: "locating"; place: string | null; coords: LatLng | null; error: null }
+  | { status: "ready"; place: string; coords: LatLng; error: null }
+  | { status: "error"; place: string | null; coords: LatLng | null; error: string };
 
 export function useMyLocation() {
   const [state, setState] = useState<LocationState>({
     status: "idle",
-    pickup: null,
+    place: null,
+    coords: null,
     error: null,
   });
 
@@ -18,32 +19,28 @@ export function useMyLocation() {
     if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
       setState({
         status: "error",
-        pickup: null,
+        place: null,
+        coords: null,
         error: "Location isn't supported in this browser.",
       });
       return;
     }
-    setState({ status: "locating", pickup: null, error: null });
+    setState((s) => ({ ...s, status: "locating", error: null }));
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const place = nearestPlace({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
+        const coords: LatLng = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        setState({
+          status: "ready",
+          place: `${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}`,
+          coords,
+          error: null,
         });
-        if (place) {
-          setState({ status: "ready", pickup: place, error: null });
-        } else {
-          setState({
-            status: "error",
-            pickup: null,
-            error: "You're outside our current coverage area.",
-          });
-        }
       },
       (err) => {
         setState({
           status: "error",
-          pickup: null,
+          place: null,
+          coords: null,
           error:
             err.code === err.PERMISSION_DENIED
               ? "Location permission was denied — enter your pickup manually."

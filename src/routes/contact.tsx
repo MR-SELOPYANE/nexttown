@@ -9,14 +9,14 @@ export const Route = createFileRoute("/contact")({
   component: ContactPage,
   head: () => ({
     meta: [
-      { title: "Contact — HITCH SA" },
+      { title: "Contact — Next Town" },
       {
         name: "description",
         content:
-          "Get in touch with HITCH SA — sales, partnerships, press and general enquiries. Sandton HQ.",
+          "Get in touch with Next Town — sales, partnerships, press and general enquiries. Sandton HQ.",
       },
-      { property: "og:title", content: "Contact — HITCH SA" },
-      { property: "og:description", content: "Talk to the HITCH SA team." },
+      { property: "og:title", content: "Contact — Next Town" },
+      { property: "og:description", content: "Talk to the Next Town team." },
       { property: "og:url", content: "/contact" },
     ],
     links: [{ rel: "canonical", href: "/contact" }],
@@ -48,12 +48,12 @@ function ContactPage() {
             <ContactCard
               icon={Mail}
               title="Email"
-              lines={["hello@hitch.sa", "sales@hitch.sa", "press@hitch.sa"]}
+              lines={["hello@nexttown.co.za", "sales@nexttown.co.za", "press@nexttown.co.za"]}
             />
             <ContactCard
               icon={Phone}
               title="Phone"
-              lines={["+27 10 001 2400 (Mon–Fri, 08:00–18:00)", "0800 HITCH (24/7 emergency)"]}
+              lines={["+27 10 001 2400 (Mon–Fri, 08:00–18:00)", "0800 NEXTTOWN (24/7 emergency)"]}
             />
             <ContactCard
               icon={MapPin}

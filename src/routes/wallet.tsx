@@ -14,13 +14,13 @@ import { Input } from "@/components/ui/input";
 export const Route = createFileRoute("/wallet")({
   head: () => ({
     meta: [
-      { title: "HITCH SA Wallet — Top up, pay and get paid" },
+      { title: "Next Town Wallet — Top up, pay and get paid" },
       {
         name: "description",
         content:
-          "Manage your HITCH SA wallet: instant EFT top-ups with Ozow and PayFast, trip payments, operator payouts and a full transaction history.",
+          "Manage your Next Town wallet: instant EFT top-ups with Ozow and PayFast, trip payments, operator payouts and a full transaction history.",
       },
-      { property: "og:title", content: "HITCH SA Wallet" },
+      { property: "og:title", content: "Next Town Wallet" },
       {
         property: "og:description",
         content:
@@ -67,7 +67,7 @@ function WalletInner() {
     <PageShell>
       <PageHeader
         eyebrow="Payments"
-        title="Your HITCH SA wallet"
+        title="Your Next Town wallet"
         subtitle="One balance for rides, parcels, freight and flights — funded by instant EFT, card or operator earnings."
       />
       <section className="px-6 py-14 max-w-6xl mx-auto grid lg:grid-cols-[1.1fr_1fr] gap-6">

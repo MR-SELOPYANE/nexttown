@@ -1,10 +1,20 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+﻿import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PageShell } from "@/components/site/page-shell";
-import { LiveMap } from "@/components/site/maps";
+import { RideMap } from "@/components/site/map";
 import { useDemo, zar } from "@/lib/demo-store";
 import { distanceKm, lookupPlace, SA_PLACES, type LatLng } from "@/lib/sa-places";
+import { getDirections, type RouteInfo } from "@/lib/google-maps";
+import { useRideTracker } from "@/lib/ride/use-ride-tracker";
+import { useDriverPublisher } from "@/lib/realtime/use-driver-publisher";
+import { gpsFixToDriverLocation } from "@/lib/realtime/location-mappers";
+import type { Driver } from "@/lib/ride/types";
 import { OperatorListings } from "@/components/site/operator-listings";
+import { driverModeState, openPickupNavigation } from "@/lib/driver/state";
+import { DRIVER_STATE_LABELS } from "@/lib/driver/types";
+import { buildDriver, driverStatusForMode } from "@/lib/driver/driver-utils";
+import { offsetKm } from "@/lib/ride/geo";
+import { DriverMetric } from "@/components/site/driver/driver-ui";
 import {
   CheckCircle2,
   Clock,
@@ -12,7 +22,6 @@ import {
   Navigation,
   Power,
   Shield,
-  Star,
   TrendingUp,
   Wallet,
   X,
@@ -22,13 +31,13 @@ export const Route = createFileRoute("/drive")({
   component: DrivePage,
   head: () => ({
     meta: [
-      { title: "Driver mode — HITCH SA" },
+      { title: "Driver mode â€” Next Town" },
       {
         name: "description",
         content:
-          "Go online, accept nearby ride requests, navigate the trip and watch your HITCH SA earnings build in real time.",
+          "Go online, accept nearby ride requests, navigate the trip and watch your Next Town earnings build in real time.",
       },
-      { property: "og:title", content: "Driver mode — HITCH SA" },
+      { property: "og:title", content: "Driver mode â€” Next Town" },
       {
         property: "og:description",
         content: "Bolt-style driver console: online toggle, live requests, earnings.",
@@ -39,7 +48,7 @@ export const Route = createFileRoute("/drive")({
   }),
 });
 
-type Phase = "idle" | "offer" | "topickup" | "ontrip" | "complete";
+type Phase = "idle" | "offer" | "accepted" | "topickup" | "arrived" | "ontrip" | "complete";
 
 const REQUESTS = [
   { rider: "Lerato N.", rating: 4.9, pickup: "Sandton", dropoff: "OR Tambo", note: "2 bags" },
@@ -66,9 +75,10 @@ const REQUESTS = [
   },
 ];
 
-function fareFor(from: LatLng, to: LatLng) {
-  const km = Math.max(2, distanceKm(from, to));
-  return { km, fare: Math.round(22 + km * 8.5), mins: Math.max(6, Math.round(km * 1.6)) };
+function fareFor(fareKm: number, roadMins: number | null) {
+  const km = Math.max(2, fareKm);
+  const mins = roadMins ?? Math.max(6, Math.round(km * 1.6));
+  return { km, fare: Math.round(22 + km * 8.5), mins };
 }
 
 function DrivePage() {
@@ -77,16 +87,84 @@ function DrivePage() {
   const [phase, setPhase] = useState<Phase>("idle");
   const [reqIndex, setReqIndex] = useState(0);
   const [countdown, setCountdown] = useState(15);
-  const [progress, setProgress] = useState(0);
   const [trips, setTrips] = useState(6);
   const [earnings, setEarnings] = useState(1284);
   const [declines, setDeclines] = useState(1);
   const offerTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null);
 
   const req = REQUESTS[reqIndex % REQUESTS.length];
   const from = lookupPlace(req.pickup) ?? SA_PLACES.sandton;
-  const to = lookupPlace(req.dropoff) ?? SA_PLACES.pretoria;
-  const { km, fare, mins } = fareFor(from, to);
+
+  const to = lookupPlace(req.dropoff) ?? SA_PLACES.centurion;
+
+  // This driver's own live entity â€” the feed moves THIS car, not a fake one.
+  const myDriver = useMemo<Driver>(
+    () =>
+      buildDriver(
+        {
+          name: "Sipho M.",
+          car: "VW Polo Â· Silver",
+          plate: "JH 42 KL GP",
+          rating: 4.97,
+          trips: 2821,
+          phone: "+27100000008",
+        },
+        "driver-self",
+        offsetKm(from, 1.5, 2.5),
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [from.lat, from.lng],
+  );
+
+  // ---- real-time GPS publisher: broadcasts THIS device's position ----------
+  // The driver's own car is live: real GPS replaces the demo car. The
+  // publisher owns the Supabase Auth session + throttled upserts to
+  // driver_locations (RLS-protected; the client never sends a driver id).
+  const driverMode = driverModeState(online, phase);
+  const driverStatus = driverStatusForMode(online, driverMode);
+
+  const publisher = useDriverPublisher({ enabled: online, status: driverStatus });
+  const liveLoc = publisher.lastFix
+    ? gpsFixToDriverLocation(publisher.lastFix, driverStatus)
+    : null;
+
+  // LIVE mode: the simulated feed is disabled; the map mirrors the real device
+  // GPS (passengers see the exact same coordinates via Supabase Realtime).
+  const tracker = useRideTracker({
+    pickup: from,
+    dropoff: to,
+    pickupLabel: req.pickup,
+    dropoffLabel: req.dropoff,
+    drivers: [myDriver],
+    speedKmh: 40,
+    autoTransition: false,
+    live: true,
+    liveLocation: liveLoc,
+    liveConnected: publisher.link === "authenticated",
+  });
+
+  // Fetch road-based route info
+  useEffect(() => {
+    if (phase !== "offer" && phase !== "accepted" && phase !== "topickup" && phase !== "ontrip")
+      return;
+    let cancelled = false;
+    getDirections(from, to)
+      .then((info) => {
+        if (!cancelled) setRouteInfo(info);
+      })
+      .catch(() => {
+        if (!cancelled) setRouteInfo(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [from.lat, from.lng, to.lat, to.lng, phase]);
+
+  const { km, fare, mins } = fareFor(
+    routeInfo?.distanceKm ?? distanceKm(from, to),
+    routeInfo?.durationMin ?? null,
+  );
   const payout = Math.round(fare * 0.88);
 
   // queue a new offer while online and idle
@@ -112,19 +190,22 @@ function DrivePage() {
     if (phase === "offer" && countdown <= 0) declineOffer();
   }, [countdown, phase]);
 
-  // trip progress
-  useEffect(() => {
-    if (phase !== "topickup" && phase !== "ontrip") return;
-    const t = setInterval(() => setProgress((p) => Math.min(100, p + 4)), 260);
-    return () => clearInterval(t);
-  }, [phase]);
-
   function acceptOffer() {
-    setProgress(0);
-    setPhase("topickup");
+    tracker.assign(myDriver);
+    setPhase("accepted");
+    window.setTimeout(() => setPhase("topickup"), 350);
     notify({
-      title: `Trip accepted · ${req.pickup} → ${req.dropoff}`,
-      body: `${req.rider} is waiting. Payout ${zar(payout)} after platform fee.`,
+      title: `Trip accepted Â· ${req.pickup} â†’ ${req.dropoff}`,
+      body: `Pickup at ${req.pickup}. Payout ${zar(payout)} after platform fee.`,
+      kind: "trip",
+    });
+  }
+
+  function markArrived() {
+    setPhase("arrived");
+    notify({
+      title: "Pickup marked arrived",
+      body: "The passenger can be notified that you are at the pickup point.",
       kind: "trip",
     });
   }
@@ -136,6 +217,7 @@ function DrivePage() {
   }
 
   function completeTrip() {
+    tracker.finish();
     setTrips((t) => t + 1);
     setEarnings((e) => e + payout);
     notify({
@@ -147,10 +229,14 @@ function DrivePage() {
   }
 
   function backOnline() {
+    tracker.reset();
     setReqIndex((i) => i + 1);
-    setProgress(0);
     setPhase("idle");
   }
+
+  const etaLoading = tracker.ride.eta.loading;
+  const etaMin = tracker.ride.etaMin != null ? Math.max(1, Math.round(tracker.ride.etaMin)) : mins;
+  const etaDisplay = etaLoading ? "â€¦" : `${etaMin} min`;
 
   const acceptance = Math.round((trips / (trips + declines)) * 100);
 
@@ -167,12 +253,15 @@ function DrivePage() {
       <section className="max-w-7xl mx-auto px-4 md:px-6 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-5">
           <div className="relative rounded-3xl overflow-hidden ring-1 ring-black/20 glass-card">
-            <LiveMap
-              from={from}
-              to={to}
-              progress={phase === "ontrip" ? progress : 0}
-              height={560}
+            <RideMap
+              pickup={from}
+              dropoff={to}
               labels={[req.pickup, req.dropoff]}
+              activeDriver={tracker.ride.activeDriver}
+              nearbyDrivers={[]}
+              height={560}
+              showEta={phase === "topickup" || phase === "ontrip"}
+              etaText={etaDisplay}
             />
 
             <div className="absolute top-4 left-4 right-4 flex items-center justify-between gap-3">
@@ -180,11 +269,12 @@ function DrivePage() {
                 className={`inline-flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-full glass-card ring-1 ring-black/20 ${
                   online ? "text-brand-light" : "text-muted-foreground"
                 }`}
+                aria-live="polite"
               >
                 <span
                   className={`size-2 rounded-full ${online ? "bg-brand animate-pulse" : "bg-muted-foreground"}`}
                 />
-                {online ? "Online · accepting trips" : "Offline"}
+                {DRIVER_STATE_LABELS[driverMode]}
               </span>
               <button
                 onClick={toggleOnline}
@@ -199,13 +289,19 @@ function DrivePage() {
               </button>
             </div>
 
+            {online && (
+              <div className="absolute top-[4.5rem] left-4 flex items-center gap-2">
+                <GpsPill publisher={publisher} />
+              </div>
+            )}
+
             {online && phase === "idle" && (
               <div className="absolute bottom-4 left-4 right-4 glass-card rounded-2xl ring-1 ring-black/20 p-4 flex items-center gap-3">
                 <div className="size-9 rounded-full border-2 border-brand/30 border-t-brand animate-spin shrink-0" />
                 <div>
-                  <p className="text-sm font-medium">Waiting for requests…</p>
+                  <p className="text-sm font-medium">Waiting for requestsâ€¦</p>
                   <p className="text-xs text-muted-foreground">
-                    You're in a high-demand zone — expect a trip shortly.
+                    You're in a high-demand zone â€” expect a trip shortly.
                   </p>
                 </div>
               </div>
@@ -231,10 +327,9 @@ function DrivePage() {
                   </div>
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <div className="text-lg font-semibold">{req.rider}</div>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <Star className="size-3 fill-brand text-brand" />
-                        {req.rating} · {req.note}
+                      <div className="text-lg font-semibold">Ride request</div>
+                      <div className="text-xs text-muted-foreground">
+                        Standard ride Â· passenger details stay private
                       </div>
                     </div>
                     <div className="text-right">
@@ -246,12 +341,12 @@ function DrivePage() {
                     <Leg
                       icon={<span className="size-2.5 rounded-full bg-brand" />}
                       label={req.pickup}
-                      sub="4 min away"
+                      sub={routeInfo ? `Pickup` : "Loadingâ€¦"}
                     />
                     <Leg
                       icon={<MapPin className="size-3.5 text-amber-400" />}
                       label={req.dropoff}
-                      sub={`${km} km · ${mins} min`}
+                      sub={`${km} km Â· ${mins} min`}
                     />
                   </div>
                   <div className="flex gap-2">
@@ -265,7 +360,7 @@ function DrivePage() {
                       onClick={acceptOffer}
                       className="flex-[2] bg-brand hover:bg-brand-light text-white text-sm font-semibold py-3 rounded-2xl ring-1 ring-brand/50 transition-colors"
                     >
-                      Accept · {zar(payout)}
+                      Accept Â· {zar(payout)}
                     </button>
                   </div>
                 </div>
@@ -277,12 +372,12 @@ function DrivePage() {
             <div className="glass-card rounded-3xl ring-1 ring-black/20 p-5">
               <h1 className="text-2xl font-semibold tracking-tight">Driver console</h1>
               <p className="text-sm text-muted-foreground mt-1">
-                Accept, navigate and get paid — all from one screen.
+                Accept, navigate and get paid â€” all from one screen.
               </p>
               <div className="grid grid-cols-3 gap-2 mt-5">
-                <Metric icon={Wallet} label="Today" value={zar(earnings)} />
-                <Metric icon={TrendingUp} label="Trips" value={String(trips)} />
-                <Metric icon={Shield} label="Accept" value={`${acceptance}%`} />
+                <DriverMetric icon={Wallet} label="Today" value={zar(earnings)} />
+                <DriverMetric icon={TrendingUp} label="Trips" value={String(trips)} />
+                <DriverMetric icon={Shield} label="Accept" value={`${acceptance}%`} />
               </div>
             </div>
 
@@ -297,38 +392,62 @@ function DrivePage() {
 
               {phase === "offer" && (
                 <p className="text-sm text-muted-foreground">
-                  Incoming request from {req.rider} — respond on the map.
+                  Incoming standard ride request â€” respond before the timer expires.
                 </p>
               )}
 
-              {(phase === "topickup" || phase === "ontrip") && (
+              {(phase === "accepted" ||
+                phase === "topickup" ||
+                phase === "arrived" ||
+                phase === "ontrip") && (
                 <>
                   <div className="text-[10px] font-bold uppercase tracking-widest text-brand-light">
-                    {phase === "topickup" ? "Driving to pickup" : "Trip in progress"}
+                    {DRIVER_STATE_LABELS[driverMode]}
                   </div>
                   <div className="text-lg font-semibold">
-                    {phase === "topickup" ? req.pickup : `${req.pickup} → ${req.dropoff}`}
+                    {phase === "accepted" || phase === "topickup" || phase === "arrived"
+                      ? req.pickup
+                      : `${req.pickup} â†’ ${req.dropoff}`}
                   </div>
                   <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
                     <div
                       className="h-full bg-brand transition-all"
-                      style={{ width: `${progress}%` }}
+                      style={{ width: `${tracker.progressPct}%` }}
                     />
                   </div>
                   <div className="grid grid-cols-3 gap-2">
-                    <Metric icon={Wallet} label="Payout" value={zar(payout)} />
-                    <Metric icon={Navigation} label="Distance" value={`${km} km`} />
-                    <Metric icon={Clock} label="ETA" value={`${mins} min`} />
+                    <DriverMetric icon={Wallet} label="Payout" value={zar(payout)} />
+                    <DriverMetric icon={Navigation} label="Distance" value={`${km} km`} />
+                    <DriverMetric icon={Clock} label="ETA" value={etaDisplay} />
                   </div>
-                  {phase === "topickup" ? (
+                  {phase === "accepted" ? (
+                    <div className="rounded-2xl border border-brand/20 bg-brand/10 px-3 py-3 text-sm text-brand-light">
+                      Preparing navigation to pickupâ€¦
+                    </div>
+                  ) : phase === "topickup" ? (
+                    <>
+                      <button
+                        onClick={() => openPickupNavigation(from)}
+                        className="w-full inline-flex items-center justify-center gap-2 text-sm font-semibold py-3 rounded-2xl border border-brand/30 text-brand-light hover:bg-brand/10"
+                      >
+                        <Navigation className="size-4" /> Navigate to pickup
+                      </button>
+                      <button
+                        onClick={markArrived}
+                        className="w-full bg-brand hover:bg-brand-light text-white text-sm font-semibold py-3.5 rounded-2xl ring-1 ring-brand/50 transition-colors"
+                      >
+                        Mark arrived
+                      </button>
+                    </>
+                  ) : phase === "arrived" ? (
                     <button
                       onClick={() => {
-                        setProgress(0);
+                        tracker.startTrip();
                         setPhase("ontrip");
                       }}
                       className="w-full bg-brand hover:bg-brand-light text-white text-sm font-semibold py-3.5 rounded-2xl ring-1 ring-brand/50 transition-colors"
                     >
-                      Rider on board — start trip
+                      Passenger on board â€” start trip
                     </button>
                   ) : (
                     <button
@@ -348,7 +467,7 @@ function DrivePage() {
                     <div>
                       <div className="text-lg font-semibold">{zar(payout)} earned</div>
                       <p className="text-xs text-muted-foreground">
-                        {req.pickup} → {req.dropoff} · paid out Friday 08:00
+                        {req.pickup} â†’ {req.dropoff} Â· paid out Friday 08:00
                       </p>
                     </div>
                   </div>
@@ -425,3 +544,50 @@ function Metric({
   );
 }
 
+/** Small live-tracking health pill: Supabase link + geolocation state. */
+function GpsPill({ publisher }: { publisher: ReturnType<typeof useDriverPublisher> }) {
+  const { link, run } = publisher;
+
+  if (link === "unconfigured") {
+    return (
+      <span className="text-[11px] font-medium px-2.5 py-1 rounded-full glass-card ring-1 ring-black/20 text-muted-foreground">
+        Live tracking demo â€” Supabase not configured
+      </span>
+    );
+  }
+
+  const color =
+    link === "authenticated" && run === "tracking"
+      ? "bg-brand/15 text-brand-light ring-brand/30"
+      : run === "denied" ||
+          run === "unavailable" ||
+          run === "unsupported" ||
+          link === "session_required" ||
+          link === "session_error"
+        ? "bg-red-500/15 text-red-400 ring-red-500/30"
+        : "bg-white/10 text-muted-foreground ring-black/20";
+
+  const label =
+    run === "denied"
+      ? "Location permission denied"
+      : run === "unavailable" || run === "unsupported"
+        ? "Location unavailable"
+        : link === "signing" || run === "geolocation_pending"
+          ? "Starting live trackingâ€¦"
+          : link === "session_required" || link === "session_error"
+            ? "Live link error â€” retrying"
+            : "GPS live Â· position broadcasting";
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full ring-1 ${color}`}
+    >
+      <span
+        className={`size-2 rounded-full ${
+          label.startsWith("GPS live") ? "bg-brand animate-pulse" : "bg-current"
+        }`}
+      />
+      {label}
+    </span>
+  );
+}

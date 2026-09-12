@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+﻿import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthService } from "../services/auth-service";
 import { BookingService, type BookingInput } from "../services/booking-service";
 import { MarketService, type SearchQuery } from "../services/market-service";
@@ -7,12 +7,17 @@ import { SupportService } from "../services/support-service";
 import { WalletService } from "../services/wallet-service";
 import { FavouriteService } from "../services/favourite-service";
 import { CommuteService, type CommuteInput } from "../services/commute-service";
-import type {
-  BookingReview,
-  MarketType,
-  NotificationKind,
-  Role,
-} from "../domain/types";
+import {
+  getPricingQuoteFn,
+  getPricingRulesFn,
+  resetPricingRulesFn,
+  savePricingRulesFn,
+} from "../pricing/pricing-server";
+import { PricingRuleStore } from "../pricing/rule-store";
+import type { PriceTripInput, PricingRules } from "../pricing/types";
+import type { BookingReview, MarketType, NotificationKind, Role } from "../domain/types";
+import type { SafetyIncidentKind } from "../safety";
+import { SafetyService } from "../safety";
 
 export const qk = {
   listings: (type: MarketType) => ["listings", type] as const,
@@ -28,6 +33,8 @@ export const qk = {
   adminUsers: () => ["users", "all"] as const,
   favourites: (userId: string) => ["favourites", userId] as const,
   commutePlans: (userId: string) => ["commute-plans", userId] as const,
+  pricingQuote: () => ["pricing", "quote"] as const,
+  pricingRules: () => ["pricing", "rules"] as const,
 };
 
 export function useListings(type: MarketType) {
@@ -221,10 +228,59 @@ export function useTriggerSos(userId: string) {
       qc.invalidateQueries({ queryKey: qk.notifications(userId) });
       void NotificationService.push(userId, {
         title: "SOS dispatched",
-        body: "Your live location was shared with the HITCH SA safety desk and your emergency contact.",
+        body: "Your live location was shared with the Next Town safety desk and your emergency contact.",
         kind: "safety",
       });
     },
+  });
+}
+
+export function useRideEvents(userId: string, bookingId: string | undefined) {
+  return useQuery({
+    queryKey: ["safety", "ride-events", userId, bookingId],
+    queryFn: () => SafetyService.listRideEvents(userId, bookingId!),
+    enabled: Boolean(userId && bookingId),
+  });
+}
+
+export function useRecordRideEvent(userId: string, bookingId: string | undefined) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: {
+      type: Parameters<typeof SafetyService.recordRideEvent>[2];
+      metadata?: Record<string, string | number | boolean>;
+    }) => {
+      if (!bookingId) throw new Error("Booking is required.");
+      return Promise.resolve(
+        SafetyService.recordRideEvent(userId, bookingId, input.type, input.metadata),
+      );
+    },
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["safety", "ride-events", userId, bookingId] }),
+  });
+}
+
+export function useCreateSafetyIncident(userId: string) {
+  return useMutation({
+    mutationFn: (input: {
+      kind: SafetyIncidentKind;
+      message: string;
+      bookingId?: string;
+      location?: { lat: number; lng: number };
+    }) =>
+      Promise.resolve(
+        SafetyService.createIncident(userId, input.kind, input.message, {
+          bookingId: input.bookingId,
+          location: input.location,
+        }),
+      ),
+  });
+}
+
+export function useCreateTripShare(userId: string) {
+  return useMutation({
+    mutationFn: (bookingId: string) =>
+      Promise.resolve(SafetyService.createTripShare(userId, bookingId)),
   });
 }
 
@@ -297,7 +353,7 @@ export function useCompleteParcel(userId: string) {
       qc.invalidateQueries({ queryKey: qk.txns(userId) });
       void NotificationService.push(userId, {
         title: `${booking.ref} delivered`,
-        body: `${booking.title} — proof-of-delivery verified.`,
+        body: `${booking.title} â€” proof-of-delivery verified.`,
         kind: "trip",
       });
       qc.invalidateQueries({ queryKey: qk.notifications(userId) });
@@ -364,7 +420,7 @@ export function useSubscribeCommute(userId: string) {
       qc.invalidateQueries({ queryKey: qk.txns(userId) });
       void NotificationService.push(userId, {
         title: "Commute pass active",
-        body: `${plan.from} → ${plan.to} · ${COMMUTE_MONTHLY(plan.weeklyCost)} billed to wallet.`,
+        body: `${plan.from} â†’ ${plan.to} Â· ${COMMUTE_MONTHLY(plan.weeklyCost)} billed to wallet.`,
         kind: "payment",
       });
       qc.invalidateQueries({ queryKey: qk.notifications(userId) });
@@ -380,8 +436,7 @@ export function useUnsubscribeCommute(userId: string) {
   });
 }
 
-const COMMUTE_MONTHLY = (weekly: number) =>
-  `R ${Math.round(weekly * 4.3).toLocaleString("en-ZA")}`;
+const COMMUTE_MONTHLY = (weekly: number) => `R ${Math.round(weekly * 4.3).toLocaleString("en-ZA")}`;
 
 export function useApproveDriver(userId: string) {
   const qc = useQueryClient();
@@ -429,5 +484,88 @@ export function useUsersByRole(roles: Role[]) {
       const all = await AuthService.allUsers();
       return all.filter((u) => roles.includes(u.role));
     },
+  });
+}
+
+export type PricingQuoteResult = {
+  quote: import("../pricing/types").FareQuote | null;
+  local: boolean;
+  error?: string;
+};
+
+export function usePricingQuote(input: PriceTripInput | null) {
+  return useQuery({
+    queryKey: [...qk.pricingQuote(), input] as const,
+    queryFn: async (): Promise<PricingQuoteResult> => {
+      if (!input) return { quote: null, local: false };
+      try {
+        const res = await getPricingQuoteFn({ data: { tripInput: input } });
+        if (res && "token" in res)
+          return { quote: res as import("../pricing/types").FareQuote, local: false };
+        if (res && "error" in res) {
+          return {
+            quote: PricingRuleStore.quote(input),
+            local: true,
+            error: (res as { error: string }).error,
+          };
+        }
+      } catch {
+        /* server unreachable â€” local fallback below */
+      }
+      return { quote: PricingRuleStore.quote(input), local: true };
+    },
+    enabled: Boolean(input) && Number.isFinite(input?.distanceKm) && input!.distanceKm > 0,
+  });
+}
+
+/** Quote several classes at once (ride-now selection screen). */
+export function usePricingQuotes(inputs: PriceTripInput[]) {
+  return useQueries({
+    queries: inputs.map((input) => ({
+      queryKey: [...qk.pricingQuote(), input] as const,
+      queryFn: async (): Promise<PricingQuoteResult> => {
+        if (!input) return { quote: null, local: false };
+        try {
+          const res = await getPricingQuoteFn({ data: { tripInput: input } });
+          if (res && "token" in res)
+            return { quote: res as import("../pricing/types").FareQuote, local: false };
+        } catch {
+          /* fall through to local */
+        }
+        return { quote: PricingRuleStore.quote(input), local: true };
+      },
+      enabled: Boolean(input.distanceKm) && input.distanceKm > 0,
+    })),
+  });
+}
+
+export function useAdminPricingRules() {
+  return useQuery({
+    queryKey: qk.pricingRules(),
+    queryFn: async () => {
+      const res = await getPricingRulesFn();
+      if ("rules" in res && res.rules) return res;
+      return { rules: PricingRuleStore.get(), sample: null };
+    },
+  });
+}
+
+export function useSavePricingRules() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (rules: PricingRules) => {
+      const res = await savePricingRulesFn({ data: { rules } });
+      if (res && "error" in res && res.error) throw new Error(res.error);
+      return res;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: qk.pricingRules() }),
+  });
+}
+
+export function useResetPricingRules() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => resetPricingRulesFn(),
+    onSuccess: () => qc.invalidateQueries({ queryKey: qk.pricingRules() }),
   });
 }

@@ -1,8 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PageShell } from "@/components/site/page-shell";
-import { LiveMap } from "@/components/site/maps";
+import { RideMap } from "@/components/site/map";
 import { useDemo, zar } from "@/lib/demo-store";
 import { lookupPlace, SA_PLACES, type LatLng } from "@/lib/sa-places";
+import { useRideTracker } from "@/lib/ride/use-ride-tracker";
+import { useDriverPublisher } from "@/lib/realtime/use-driver-publisher";
+import { gpsFixToDriverLocation } from "@/lib/realtime/location-mappers";
+import type { Driver } from "@/lib/ride/types";
+import { buildDriver, driverStatusForMode } from "@/lib/driver/driver-utils";
+import { offsetKm } from "@/lib/ride/geo";
+import { driverModeState } from "@/lib/driver/state";
+import { DriverMetric } from "@/components/site/driver/driver-ui";
 import {
   CheckCircle2,
   Clock,
@@ -65,7 +73,6 @@ export function OperatorConsole({
   const [phase, setPhase] = useState<Phase>("idle");
   const [reqIndex, setReqIndex] = useState(0);
   const [countdown, setCountdown] = useState(OFFER_SECONDS);
-  const [progress, setProgress] = useState(0);
   const [jobs, setJobs] = useState(config.initialJobs);
   const [earnings, setEarnings] = useState(config.initialEarnings);
   const [declines, setDeclines] = useState(1);
@@ -76,6 +83,49 @@ export function OperatorConsole({
   const to = lookupPlace(req.dropoff) ?? SA_PLACES.pretoria;
   const { km, fare, mins } = config.fareFor(from, to);
   const payout = Math.round(fare * config.payoutRatio);
+
+  // This operator's own live entity — the feed moves THIS vehicle.
+  const myDriver = useMemo<Driver>(
+    () =>
+      buildDriver(
+        {
+          name: "Sipho M.",
+          car: "VW Polo · Silver",
+          plate: "JH 42 KL GP",
+          rating: 4.97,
+          trips: 2821,
+          phone: "+27100000008",
+        },
+        "operator-self",
+        offsetKm(from, 1.5, 2.5),
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [from.lat, from.lng],
+  );
+
+  // ---- real-time GPS publisher: broadcasts THIS device's position ----------
+  // Real GPS replaces the demo car; passengers see these exact coordinates
+  // via Supabase Realtime (RLS-protected, client never sends a driver id).
+  const driverMode = driverModeState(online, phase);
+  const driverStatus = driverStatusForMode(online, driverMode);
+
+  const publisher = useDriverPublisher({ enabled: online, status: driverStatus });
+  const liveLoc = publisher.lastFix
+    ? gpsFixToDriverLocation(publisher.lastFix, driverStatus)
+    : null;
+
+  const tracker = useRideTracker({
+    pickup: from,
+    dropoff: to,
+    pickupLabel: req.pickup,
+    dropoffLabel: req.dropoff,
+    drivers: [myDriver],
+    speedKmh: 40,
+    autoTransition: false,
+    live: true,
+    liveLocation: liveLoc,
+    liveConnected: publisher.link === "authenticated",
+  });
 
   // queue a new offer while online and idle
   useEffect(() => {
@@ -100,15 +150,8 @@ export function OperatorConsole({
     if (phase === "offer" && countdown <= 0) declineOffer();
   }, [countdown, phase]);
 
-  // job progress
-  useEffect(() => {
-    if (phase !== "topickup" && phase !== "ontrip") return;
-    const t = setInterval(() => setProgress((p) => Math.min(100, p + 4)), 260);
-    return () => clearInterval(t);
-  }, [phase]);
-
   function acceptOffer() {
-    setProgress(0);
+    tracker.assign(myDriver);
     setPhase("topickup");
     notify({
       title: `Accepted · ${req.pickup} → ${req.dropoff}`,
@@ -124,6 +167,7 @@ export function OperatorConsole({
   }
 
   function completeJob() {
+    tracker.finish();
     setJobs((t) => t + 1);
     setEarnings((e) => e + payout);
     notify({
@@ -135,10 +179,14 @@ export function OperatorConsole({
   }
 
   function backOnline() {
+    tracker.reset();
     setReqIndex((i) => i + 1);
-    setProgress(0);
     setPhase("idle");
   }
+
+  const etaLoading = tracker.ride.eta.loading;
+  const etaMin = tracker.ride.etaMin != null ? Math.max(1, Math.round(tracker.ride.etaMin)) : mins;
+  const etaDisplay = etaLoading ? "…" : `${etaMin} min`;
 
   const acceptance = Math.round((jobs / (jobs + declines)) * 100);
 
@@ -155,12 +203,15 @@ export function OperatorConsole({
       <section className="max-w-7xl mx-auto px-4 md:px-6 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-5">
           <div className="relative rounded-3xl overflow-hidden ring-1 ring-black/20 glass-card">
-            <LiveMap
-              from={from}
-              to={to}
-              progress={phase === "ontrip" ? progress : 0}
-              height={560}
+            <RideMap
+              pickup={from}
+              dropoff={to}
               labels={[req.pickup, req.dropoff]}
+              activeDriver={tracker.ride.activeDriver}
+              nearbyDrivers={[]}
+              height={560}
+              showEta={phase === "topickup" || phase === "ontrip"}
+              etaText={etaDisplay}
             />
 
             <div className="absolute top-4 left-4 right-4 flex items-center justify-between gap-3">
@@ -186,6 +237,12 @@ export function OperatorConsole({
                 {online ? "Go offline" : "Go online"}
               </button>
             </div>
+
+            {online && (
+              <div className="absolute top-[4.5rem] left-4">
+                <OperatorGpsPill publisher={publisher} />
+              </div>
+            )}
 
             {online && phase === "idle" && (
               <div className="absolute bottom-4 left-4 right-4 glass-card rounded-2xl ring-1 ring-black/20 p-4 flex items-center gap-3">
@@ -270,9 +327,13 @@ export function OperatorConsole({
               <h1 className="text-2xl font-semibold tracking-tight">{config.consoleTitle}</h1>
               <p className="text-sm text-muted-foreground mt-1">{config.consoleSub}</p>
               <div className="grid grid-cols-3 gap-2 mt-5">
-                <Metric icon={Wallet} label="Today" value={zar(earnings)} />
-                <Metric icon={TrendingUp} label={config.metricJobLabel} value={String(jobs)} />
-                <Metric icon={Shield} label="Accept" value={`${acceptance}%`} />
+                <DriverMetric icon={Wallet} label="Today" value={zar(earnings)} />
+                <DriverMetric
+                  icon={TrendingUp}
+                  label={config.metricJobLabel}
+                  value={String(jobs)}
+                />
+                <DriverMetric icon={Shield} label="Accept" value={`${acceptance}%`} />
               </div>
             </div>
 
@@ -304,18 +365,18 @@ export function OperatorConsole({
                   <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
                     <div
                       className="h-full bg-brand transition-all"
-                      style={{ width: `${progress}%` }}
+                      style={{ width: `${tracker.progressPct}%` }}
                     />
                   </div>
                   <div className="grid grid-cols-3 gap-2">
-                    <Metric icon={Wallet} label="Payout" value={zar(payout)} />
-                    <Metric icon={Navigation} label="Distance" value={`${km} km`} />
-                    <Metric icon={Clock} label="ETA" value={`${mins} min`} />
+                    <DriverMetric icon={Wallet} label="Payout" value={zar(payout)} />
+                    <DriverMetric icon={Navigation} label="Distance" value={`${km} km`} />
+                    <DriverMetric icon={Clock} label="ETA" value={etaDisplay} />
                   </div>
                   {phase === "topickup" ? (
                     <button
                       onClick={() => {
-                        setProgress(0);
+                        tracker.startTrip();
                         setPhase("ontrip");
                       }}
                       className="w-full bg-brand hover:bg-brand-light text-white text-sm font-semibold py-3.5 rounded-2xl ring-1 ring-brand/50 transition-colors"
@@ -389,20 +450,49 @@ function Leg({ icon, label, sub }: { icon: React.ReactNode; label: string; sub: 
   );
 }
 
-function Metric({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: typeof Wallet;
-  label: string;
-  value: string;
-}) {
+/** Small live-tracking health pill: Supabase link + geolocation state. */
+function OperatorGpsPill({ publisher }: { publisher: ReturnType<typeof useDriverPublisher> }) {
+  const { link, run } = publisher;
+
+  if (link === "unconfigured") {
+    return (
+      <span className="text-[11px] font-medium px-2.5 py-1 rounded-full glass-card ring-1 ring-black/20 text-muted-foreground">
+        Live tracking demo — Supabase not configured
+      </span>
+    );
+  }
+
+  const degraded =
+    run === "denied" ||
+    run === "unavailable" ||
+    run === "unsupported" ||
+    link === "session_required";
+  const color =
+    link === "authenticated" && run === "tracking"
+      ? "bg-brand/15 text-brand-light ring-brand/30"
+      : degraded
+        ? "bg-red-500/15 text-red-400 ring-red-500/30"
+        : "bg-white/10 text-muted-foreground ring-black/20";
+
+  const label =
+    run === "denied"
+      ? "Location permission denied"
+      : run === "unavailable" || run === "unsupported"
+        ? "Location unavailable"
+        : link === "signing" || run === "geolocation_pending"
+          ? "Starting live tracking…"
+          : link === "session_required"
+            ? "Live link error — retrying"
+            : "GPS live · position broadcasting";
+
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-2.5">
-      <Icon className="size-3.5 text-brand-light mb-1.5" />
-      <div className="text-sm font-semibold tabular-nums">{value}</div>
-      <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</div>
-    </div>
+    <span
+      className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full ring-1 ${color}`}
+    >
+      <span
+        className={`size-2 rounded-full ${label.startsWith("GPS live") ? "bg-brand animate-pulse" : "bg-current"}`}
+      />
+      {label}
+    </span>
   );
 }

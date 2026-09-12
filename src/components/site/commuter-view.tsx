@@ -1,15 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import {
-  CalendarRange,
-  Clock,
-  Repeat,
-  Star,
-  Trash2,
-  Users,
-  Wallet,
-  Zap,
-} from "lucide-react";
+import { CalendarRange, Clock, Repeat, Star, Trash2, Users, Wallet, Zap } from "lucide-react";
 import { PageShell, PageHeader } from "@/components/site/page-shell";
 import { StatCard } from "@/components/site/status";
 import { EmptyState, ErrorState, ListSkeleton } from "@/components/site/states";
@@ -33,12 +24,7 @@ import { cn } from "@/lib/utils";
 export function CommuterView() {
   const { user } = useAuth();
   const userId = user?.id ?? "";
-  const {
-    data: plans = [],
-    isLoading,
-    isError,
-    refetch,
-  } = useCommutePlans(userId);
+  const { data: plans = [], isLoading, isError, refetch } = useCommutePlans(userId);
   const { data: wallet } = useWallet(userId);
   const { data: favourites = [] } = useFavourites(userId);
   const create = useCreateCommutePlan(userId);
@@ -72,7 +58,14 @@ export function CommuterView() {
       return;
     }
     create.mutate(
-      { from: from.trim(), to: to.trim(), time, days, weeklyCost: Math.max(1, weeklyCost), partners: Math.max(1, partners) },
+      {
+        from: from.trim(),
+        to: to.trim(),
+        time,
+        days,
+        weeklyCost: Math.max(1, weeklyCost),
+        partners: Math.max(1, partners),
+      },
       {
         onSuccess: () => {
           toast.success("Commute plan saved");
@@ -123,10 +116,7 @@ export function CommuterView() {
           </div>
         )}
 
-        <form
-          onSubmit={submit}
-          className="glass-card rounded-2xl p-5 md:p-6 ring-1 ring-black/20"
-        >
+        <form onSubmit={submit} className="glass-card rounded-2xl p-5 md:p-6 ring-1 ring-black/20">
           <h2 className="text-sm font-semibold mb-4">New commute plan</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <MarketField label="From">
@@ -244,7 +234,10 @@ export function CommuterView() {
                   <div className="text-right">
                     <div className="text-sm font-semibold tabular-nums">
                       {zar(share(p))}
-                      <span className="text-xs text-muted-foreground font-normal"> /wk your share</span>
+                      <span className="text-xs text-muted-foreground font-normal">
+                        {" "}
+                        /wk your share
+                      </span>
                     </div>
                     <div className="text-xs text-muted-foreground tabular-nums">
                       {zar(p.weeklyCost)} full fare
@@ -308,7 +301,7 @@ export function CommuterView() {
             How the pass works
           </h3>
           <p>
-            Subscribing charges one month of your route to the HITCH wallet (weekly fare × 4.3) as a
+            Subscribing charges one month of your route to the NT wallet (weekly fare × 4.3) as a
             single payment. The pass covers every booked leg on that route for the month — no more
             paying per trip.
           </p>

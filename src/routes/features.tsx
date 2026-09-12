@@ -28,16 +28,17 @@ export const Route = createFileRoute("/features")({
   component: FeaturesPage,
   head: () => ({
     meta: [
-      { title: "Features — HITCH SA" },
+      { title: "Features — Next Town" },
       {
         name: "description",
         content:
-          "HITCH SA's complete mobility toolkit: verified rides, parcels, truck return-loads, airline seats, school transport, commuter plans, escrow payments, GPS tracking, SOS, ratings and analytics.",
+          "Next Town's complete mobility toolkit: verified rides, parcels, truck return-loads, airline seats, school transport, commuter plans, escrow payments, GPS tracking, SOS, ratings and analytics.",
       },
-      { property: "og:title", content: "Features — HITCH SA" },
+      { property: "og:title", content: "Features — Next Town" },
       {
         property: "og:description",
-        content: "Every HITCH SA module: registration, verification, matching, payments, safety and analytics.",
+        content:
+          "Every Next Town module: registration, verification, matching, payments, safety and analytics.",
       },
       { property: "og:url", content: "/features" },
     ],
@@ -219,9 +220,7 @@ function FeatureSection({
         <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-2">
           {eyebrow}
         </h2>
-        <p className="text-2xl md:text-3xl font-medium tracking-tight text-balance mb-8">
-          {title}
-        </p>
+        <p className="text-2xl md:text-3xl font-medium tracking-tight text-balance mb-8">{title}</p>
         <div className={`grid grid-cols-1 md:grid-cols-2 ${cols} gap-4`}>
           {items.map((f) => (
             <FeatureCard key={f.title} {...f} />
@@ -266,11 +265,7 @@ function FeaturesPage() {
         cols="md:grid-cols-2 lg:grid-cols-3"
       />
 
-      <FeatureSection
-        eyebrow="Identity"
-        title="Verified before they ride"
-        items={VERIFICATION}
-      />
+      <FeatureSection eyebrow="Identity" title="Verified before they ride" items={VERIFICATION} />
 
       <FeatureSection
         eyebrow="Matching & safety"
@@ -284,11 +279,7 @@ function FeaturesPage() {
         items={TRUST}
       />
 
-      <FeatureSection
-        eyebrow="Platform"
-        title="Run by operators, for operators"
-        items={ADMIN}
-      />
+      <FeatureSection eyebrow="Platform" title="Run by operators, for operators" items={ADMIN} />
 
       <section className="px-6 py-20 border-t border-white/5">
         <div className="max-w-7xl mx-auto">

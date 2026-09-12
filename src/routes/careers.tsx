@@ -12,13 +12,13 @@ export const Route = createFileRoute("/careers")({
   component: CareersPage,
   head: () => ({
     meta: [
-      { title: "Careers — HITCH SA" },
+      { title: "Careers — Next Town" },
       {
         name: "description",
         content:
-          "Join HITCH SA. Open engineering, design, operations and driver-experience roles in Sandton, Cape Town and Durban.",
+          "Join Next Town. Open engineering, design, operations and driver-experience roles in Sandton, Cape Town and Durban.",
       },
-      { property: "og:title", content: "Careers — HITCH SA" },
+      { property: "og:title", content: "Careers — Next Town" },
       { property: "og:description", content: "Help us move a country in one direction." },
       { property: "og:url", content: "/careers" },
     ],
@@ -64,7 +64,7 @@ function CareersPage() {
             {ROLES.map((r) => (
               <a
                 key={r.title}
-                href="mailto:careers@hitch.sa"
+                href="mailto:careers@nexttown.co.za"
                 className="flex items-center gap-6 px-6 py-5 hover:bg-white/[0.03] transition-colors group"
               >
                 <div className="text-brand-light text-[10px] font-bold uppercase tracking-widest w-32 shrink-0">
@@ -85,7 +85,7 @@ function CareersPage() {
       <section className="px-6 pb-24 border-t border-white/5 pt-16">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6">
-            Life at HITCH
+            Life at Next Town
           </h2>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-16">
             {PERKS.map((p) => (
@@ -197,7 +197,7 @@ function CareerForm() {
           rows={4}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Why HITCH SA, and what you'd bring…"
+          placeholder="Why Next Town, and what you'd bring…"
           className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-brand/50 resize-none"
         />
       </div>

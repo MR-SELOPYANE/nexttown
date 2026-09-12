@@ -7,13 +7,13 @@ export const Route = createFileRoute("/faq")({
   component: FaqPage,
   head: () => ({
     meta: [
-      { title: "FAQ — HITCH SA" },
+      { title: "FAQ — Next Town" },
       {
         name: "description",
         content:
-          "Answers to the most common questions about HITCH SA — accounts, payments, safety, drivers and business features.",
+          "Answers to the most common questions about Next Town — accounts, payments, safety, drivers and business features.",
       },
-      { property: "og:title", content: "FAQ — HITCH SA" },
+      { property: "og:title", content: "FAQ — Next Town" },
       { property: "og:description", content: "The most common questions, answered." },
       { property: "og:url", content: "/faq" },
     ],
@@ -37,7 +37,7 @@ export const Route = createFileRoute("/faq")({
 
 const FAQS = [
   {
-    q: "Which cities does HITCH SA operate in?",
+    q: "Which cities does Next Town operate in?",
     a: "We're live across all nine South African provinces, with the deepest coverage in Gauteng, Western Cape and KwaZulu-Natal. Regional coverage varies by vertical.",
   },
   {
@@ -46,18 +46,18 @@ const FAQS = [
   },
   {
     q: "How does the wallet work?",
-    a: "Your HITCH wallet holds funds for rides, parcels, freight, seats and school transport. Top up via PayFast, Ozow or card. Operators receive payouts to their linked bank account.",
+    a: "Your Next Town wallet holds funds for rides, parcels, freight, seats and school transport. Top up via PayFast, Ozow or card. Operators receive payouts to their linked bank account.",
   },
   {
     q: "What happens if I have an emergency during a trip?",
     a: "Tap the in-app SOS button. Your live location, trip and driver details are sent to our 24/7 operations centre, your emergency contacts and — if you opt in — private security response.",
   },
   {
-    q: "Can businesses integrate HITCH into their systems?",
+    q: "Can businesses integrate Next Town into their systems?",
     a: "Yes. Our enterprise API covers bookings, tracking, invoicing and webhooks. Contact sales for SLAs, SSO and white-label options.",
   },
   {
-    q: "Is HITCH POPIA compliant?",
+    q: "Is Next Town POPIA compliant?",
     a: "Yes. All personal data is stored on encrypted infrastructure inside South Africa, processed under a POPIA-registered Information Officer, and available for export or deletion on request.",
   },
 ];
@@ -69,7 +69,7 @@ function FaqPage() {
       <PageHeader
         eyebrow="FAQ"
         title="Answers, straight up."
-        subtitle="Common questions across all five HITCH verticals. Can't find yours? Support is one tap away."
+        subtitle="Common questions across all five verticals. Can't find yours? Support is one tap away."
       />
 
       <section className="px-6 py-16">
